@@ -89,10 +89,22 @@ class ConfigStore: ObservableObject {
                 selectedSkin: self.selectedSkin,
                 petColorHex: self.petColorHex
             )
-            guard let data = try? JSONEncoder().encode(config) else { return }
-            try? data.write(to: self.configURL)
+            self.writeConfig(config)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: saveDebounce!)
+    }
+
+    private func writeConfig(_ config: Config) {
+        guard let data = try? JSONEncoder().encode(config) else { return }
+        // 格式化输出，indent=4
+        guard let jsonString = String(data: data, encoding: .utf8),
+              let jsonData = jsonString.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: jsonData),
+              let prettyData = try? JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys]) else { return }
+        // 将 2 空格缩进转换为 4 空格
+        let prettyString = String(data: prettyData, encoding: .utf8)?.replacingOccurrences(of: "\n  ", with: "\n    ")
+        guard let finalData = prettyString?.data(using: .utf8) else { return }
+        try? finalData.write(to: configURL)
     }
 
     // MARK: - Migration (可选：从 UserDefaults 迁移)
@@ -135,8 +147,6 @@ class ConfigStore: ObservableObject {
             voiceEnabled: voiceEnabled, petScale: petScale,
             selectedSkin: selectedSkin, petColorHex: petColorHex
         )
-        if let data = try? JSONEncoder().encode(config) {
-            try? data.write(to: configURL)
-        }
+        writeConfig(config)
     }
 }

@@ -53,30 +53,59 @@
 
 ## 📦 Installation
 
-### Download (Coming Soon)
-Download the latest DMG from [Releases](https://github.com/yourusername/DeskBuddy/releases).
+### Download
+Download the latest DMG from [Releases](https://github.com/joytianya/DeskBuddy/releases).
 
 ### Build from Source
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/DeskBuddy.git
+   git clone https://github.com/joytianya/DeskBuddy.git
    cd DeskBuddy
    ```
 
-2. Open in Xcode:
+2. **Open in Xcode:**
    ```bash
    open DeskBuddy.xcodeproj
    ```
 
-   Or create project via Xcode (see [SETUP.md](SETUP.md) for first-time setup).
+   > If `.xcodeproj` doesn't exist, see [SETUP.md](SETUP.md) for first-time project setup.
 
-3. Build and run:
-   ```bash
-   # Via Xcode: Product > Run
-   # Or command line:
-   xcodebuild -project DeskBuddy.xcodeproj -scheme DeskBuddy build
-   ```
+3. **Build and run:**
+   - Via Xcode: `Product > Run` (⌘R)
+   - Or command line:
+     ```bash
+     xcodebuild -project DeskBuddy.xcodeproj -scheme DeskBuddy build
+     ```
+
+### Create DMG Installer
+
+Build a redistributable DMG package:
+
+```bash
+# 1. Build Release version
+xcodebuild -project DeskBuddy.xcodeproj \
+  -scheme DeskBuddy \
+  -configuration Release \
+  -derivedDataPath build \
+  clean build
+
+# 2. Create DMG (output: DeskBuddy-0.1.0.dmg)
+mkdir -p release
+cp -R build/Build/Products/Release/DeskBuddy.app release/
+ln -sf /Applications release/Applications
+hdiutil create -volname "DeskBuddy" -srcfolder release -ov -format UDZO DeskBuddy-0.1.0.dmg
+rm -rf release
+
+# DMG will be created at: ./DeskBuddy-0.1.0.dmg
+```
+
+**Output paths:**
+| Build Type | Output Location |
+|------------|-----------------|
+| Debug (Xcode) | `~/Library/Developer/Xcode/DerivedData/DeskBuddy-*/Build/Products/Debug/DeskBuddy.app` |
+| Release (CLI) | `build/Build/Products/Release/DeskBuddy.app` |
+| DMG Package | `./DeskBuddy-0.1.0.dmg` |
 
 ## 🔧 Configuration
 
@@ -142,19 +171,24 @@ DeskBuddy/
 - Xcode 15.0+
 - Swift 5.9
 
-### Build
+### Quick Commands
+
 ```bash
+# Debug build (for development)
+xcodebuild -project DeskBuddy.xcodeproj -scheme DeskBuddy build
+
+# Release build (for distribution)
 xcodebuild -project DeskBuddy.xcodeproj \
   -scheme DeskBuddy \
   -configuration Release \
+  -derivedDataPath build \
   build
-```
 
-### Run Tests
-```bash
-xcodebuild -project DeskBuddy.xcodeproj \
-  -scheme DeskBuddyTests \
-  test
+# Run tests
+xcodebuild -project DeskBuddy.xcodeproj -scheme DeskBuddyTests test
+
+# Generate project (if using XcodeGen)
+xcodegen generate
 ```
 
 ### Project Generation (XcodeGen)
@@ -184,7 +218,7 @@ Contributions are welcome! Please:
 MIT License — see [LICENSE](LICENSE) for details.
 
 ```
-Copyright (c) 2024 DeskBuddy
+Copyright (c) 2026 joytianya
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -203,4 +237,4 @@ copies of the Software...
 
 Made with 💙 for macOS
 
-[Report Bug](https://github.com/yourusername/DeskBuddy/issues) · [Request Feature](https://github.com/yourusername/DeskBuddy/issues)
+[Report Bug](https://github.com/joytianya/DeskBuddy/issues) · [Request Feature](https://github.com/joytianya/DeskBuddy/issues)

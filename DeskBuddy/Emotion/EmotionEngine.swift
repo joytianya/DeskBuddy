@@ -42,18 +42,17 @@ class EmotionEngine: ObservableObject {
         // 检查系统空闲时间，长时间空闲时趴着休息
         let idleMinutes = SystemSignal.currentIdleMinutes()
         if idleMinutes > 3 {
-            // 系统空闲超过 3 分钟 → lying（趴着或前爪着地）
             return .lying
         }
 
         // 新阈值分布（更平滑）
         switch combined {
-        case 0.80...:  return .excited   // 很高兴（跳）
-        case 0.60...: return .happy      // 开心
-        case 0.45...: return .idle       // 正常
-        case 0.30...: return .bored      // 无聊
-        case 0.15...: return .sleepy     // 困倦
-        default:      return .anxious    // 紧张（系统压力大）
+        case 0.80...:  return .excited
+        case 0.60...: return .happy
+        case 0.45...: return .idle
+        case 0.30...: return .bored
+        case 0.15...: return .sleepy
+        default:      return .anxious
         }
     }
 }

@@ -95,15 +95,22 @@ class ConfigStore: ObservableObject {
     }
 
     private func writeConfig(_ config: Config) {
-        guard let data = try? JSONEncoder().encode(config) else { return }
-        // 格式化输出，indent=4
-        guard let jsonString = String(data: data, encoding: .utf8),
-              let jsonData = jsonString.data(using: .utf8),
-              let json = try? JSONSerialization.jsonObject(with: jsonData),
-              let prettyData = try? JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys]) else { return }
-        // 将 2 空格缩进转换为 4 空格
-        let prettyString = String(data: prettyData, encoding: .utf8)?.replacingOccurrences(of: "\n  ", with: "\n    ")
-        guard let finalData = prettyString?.data(using: .utf8) else { return }
+        // 直接用 JSONSerialization 输出，不转义斜杠
+        let dict: [String: Any] = [
+            "aiBaseURL": config.aiBaseURL,
+            "aiModel": config.aiModel,
+            "apiKey": config.apiKey,
+            "petColorHex": config.petColorHex,
+            "petScale": config.petScale,
+            "selectedSkin": config.selectedSkin,
+            "voiceEnabled": config.voiceEnabled
+        ]
+        guard let data = try? JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted, .sortedKeys]) else { return }
+        // 将 2 空格缩进转换为 4 空格，并去掉斜杠转义
+        guard var jsonString = String(data: data, encoding: .utf8) else { return }
+        jsonString = jsonString.replacingOccurrences(of: "\n  ", with: "\n    ")
+        jsonString = jsonString.replacingOccurrences(of: "\\/", with: "/")
+        guard let finalData = jsonString.data(using: .utf8) else { return }
         try? finalData.write(to: configURL)
     }
 

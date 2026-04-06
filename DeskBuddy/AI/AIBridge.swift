@@ -50,7 +50,11 @@ class AIBridge: ObservableObject {
         let (data, _) = try await session.data(for: request)
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         let choices = json?["choices"] as? [[String: Any]]
-        let content = (choices?.first?["message"] as? [String: String])?["content"]
+        let message = choices?.first?["message"] as? [String: Any]
+        let content = message?["content"] as? String
+        if let errMsg = (json?["error"] as? [String: Any])?["message"] as? String {
+            throw NSError(domain: "AIBridge", code: 0, userInfo: [NSLocalizedDescriptionKey: errMsg])
+        }
         return content ?? "..."
     }
 }

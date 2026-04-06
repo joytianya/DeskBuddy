@@ -44,16 +44,7 @@ class PetEngine: SKScene {
         guard let petNode = petNode else { return }
 
         let rhythm = AnimationRhythm.forState(state)
-
-        // 空闲(lying)状态：80% 趴着(Sleep row 6), 20% 前爪着地(Paw row 7)
-        let rowOverride: Int?
-        if state == .lying {
-            rowOverride = Int.random(in: 0..<100) < 80 ? 6 : 7  // 80% Sleep (row 6), 20% Paw (row 7)
-        } else {
-            rowOverride = nil
-        }
-
-        let frames = SpriteLoader.frames(sheetName: skinName, state: state, rowOverride: rowOverride)
+        let frames = SpriteLoader.frames(sheetName: skinName, state: state)
         let textures = frames.map { t -> SKTexture in
             t.filteringMode = .nearest
             return t

@@ -7,14 +7,13 @@ struct SpriteLoader {
     ///   - sheetName: Asset catalog image name, e.g. "cat-sheet"
     ///   - state: The animation state to load
     ///   - frameSize: Size of one frame in pixels, default 32×32
-    ///   - rowOverride: Optional custom row index (e.g. for lying state variants)
-    static func frames(sheetName: String, state: PetState, frameSize: CGSize = CGSize(width: 32, height: 32), rowOverride: Int? = nil) -> [SKTexture] {
+    static func frames(sheetName: String, state: PetState, frameSize: CGSize = CGSize(width: 32, height: 32)) -> [SKTexture] {
         let sheet = SKTexture(imageNamed: sheetName)
         let sheetW = sheet.size().width
         let sheetH = sheet.size().height
         let frameW = frameSize.width / sheetW
         let frameH = frameSize.height / sheetH
-        let row = rowOverride ?? state.rowIndex
+        let row = state.rowIndex
         let y = 1.0 - CGFloat(row + 1) * frameH  // SpriteKit y-axis starts from bottom
 
         return (0..<state.frameCount).map { col in

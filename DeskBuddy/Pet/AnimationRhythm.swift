@@ -25,6 +25,9 @@ struct AnimationRhythm {
             return AnimationRhythm(playDuration: 1.0, pauseDuration: 2.0, frameInterval: 0.12, maxCycles: 2)
         case .clingy:
             return AnimationRhythm(playDuration: 3.0, pauseDuration: 1.0, frameInterval: 0.18, maxCycles: nil)
+        case .lying:
+            // 趴着休息：很慢的动画，长时间停顿
+            return AnimationRhythm(playDuration: 5.0, pauseDuration: 8.0, frameInterval: 0.50, maxCycles: nil)
         }
     }
 }

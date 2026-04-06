@@ -11,6 +11,7 @@ struct SystemPromptBuilder {
         case .anxious:  emotionDesc = "anxious and stressed"
         case .bored:    emotionDesc = "bored and looking for fun"
         case .clingy:   emotionDesc = "clingy and affectionate"
+        case .lying:    emotionDesc = "lying down and resting peacefully"
         case .idle:     emotionDesc = "calm and relaxed"
         }
 

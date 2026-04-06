@@ -16,6 +16,7 @@ enum PetState: Int, CaseIterable {
     case bored = 4
     case excited = 5
     case clingy = 6
+    case lying = 7      // 趴在地上休息
 
     var rowIndex: Int {
         switch self {
@@ -26,6 +27,7 @@ enum PetState: Int, CaseIterable {
         case .excited: return 8  // Jump
         case .sleepy:  return 6  // Sleep
         case .anxious: return 9  // Scared
+        case .lying:   return 6  // Sleep（趴着休息，同 sleepy）
         }
     }
 
@@ -38,6 +40,7 @@ enum PetState: Int, CaseIterable {
         case .excited: return 7  // Row 8: 7 frames (jump)
         case .sleepy:  return 4  // Row 6: 4 frames
         case .anxious: return 8  // Row 9: 8 frames (scared)
+        case .lying:   return 4  // Row 6: 4 frames（趴着）
         }
     }
 }

@@ -38,6 +38,14 @@ class EmotionEngine: ObservableObject {
 
     func computeState(timeScore: Double, intimacyScore: Double, systemScore: Double) -> PetState {
         let combined = timeScore * 0.3 + intimacyScore * 0.4 + systemScore * 0.3
+
+        // 检查系统空闲时间，长时间空闲时趴着休息
+        let idleMinutes = SystemSignal.currentIdleMinutes()
+        if idleMinutes > 10 {
+            // 系统空闲超过 10 分钟 → 趴着休息
+            return .lying
+        }
+
         // 新阈值分布（更平滑）
         switch combined {
         case 0.80...:  return .excited   // 很高兴（跳）

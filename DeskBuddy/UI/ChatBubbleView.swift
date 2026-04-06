@@ -7,6 +7,9 @@ struct ChatBubbleView: View {
     @State private var inputText = ""
     @State private var messages: [(role: String, text: String)] = []
     @State private var isVisible = false
+    @StateObject private var voiceInput = VoiceInput()
+    @StateObject private var voiceOutput = VoiceOutput()
+    var voiceEnabled: Bool = false
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
@@ -46,6 +49,26 @@ struct ChatBubbleView: View {
                             .textFieldStyle(.roundedBorder)
                             .font(.system(size: 13))
                             .onSubmit { sendMessage() }
+                        if voiceEnabled {
+                            Button(action: {
+                                if voiceInput.isListening {
+                                    voiceInput.stopListening()
+                                    if !voiceInput.transcript.isEmpty {
+                                        inputText = voiceInput.transcript
+                                        voiceInput.transcript = ""
+                                    }
+                                } else {
+                                    Task {
+                                        let granted = await voiceInput.requestPermission()
+                                        if granted { try? voiceInput.startListening() }
+                                    }
+                                }
+                            }) {
+                                Image(systemName: voiceInput.isListening ? "mic.fill" : "mic")
+                                    .foregroundColor(voiceInput.isListening ? .red : .primary)
+                            }
+                            .buttonStyle(.plain)
+                        }
                         Button("发送") { sendMessage() }
                             .disabled(inputText.isEmpty || aiBridge.isLoading)
                     }
@@ -77,6 +100,7 @@ struct ChatBubbleView: View {
                 )
                 await MainActor.run {
                     messages.append((role: "assistant", text: reply))
+                    if voiceEnabled { voiceOutput.speak(reply) }
                     aiBridge.isLoading = false
                     emotionEngine.recordChat()
                 }

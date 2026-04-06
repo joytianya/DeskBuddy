@@ -23,6 +23,10 @@ struct SettingsView: View {
     @State private var draftProvider: String = ""
     @State private var draftColorHex: String = ""
     @State private var pickedColor: Color = .white
+    @State private var detectedModels: [String] = []
+    @State private var detectStatus: DetectStatus = .idle
+
+    enum DetectStatus { case idle, loading, noModels, error(String) }
 
     private let providers = ["OpenAI Compatible", "Claude Compatible"]
     private let presetModelsByProvider: [String: [String]] = [
@@ -77,20 +81,46 @@ struct SettingsView: View {
                             .textFieldStyle(.roundedBorder)
                     }
 
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("API Key").font(.caption).foregroundStyle(.secondary)
+                        SecureField("输入 API Key", text: $draftKey)
+                            .textFieldStyle(.roundedBorder)
+                    }
+
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Model").font(.caption).foregroundStyle(.secondary)
-                        // 预设模型快选
+                        HStack {
+                            Text("Model").font(.caption).foregroundStyle(.secondary)
+                            Spacer()
+                            Button(action: detectModels) {
+                                if case .loading = detectStatus {
+                                    ProgressView().scaleEffect(0.6).frame(width: 14, height: 14)
+                                } else {
+                                    Text("检测模型").font(.caption)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundColor(.accentColor)
+                            .disabled(draftKey.isEmpty || draftBaseURL.isEmpty || {
+                                if case .loading = detectStatus { return true }
+                                return false
+                            }())
+                        }
+
+                        // 检测状态提示
+                        if case .noModels = detectStatus {
+                            Text("未检测到模型列表，请手动输入").font(.caption).foregroundStyle(.secondary)
+                        } else if case .error(let msg) = detectStatus {
+                            Text(msg).font(.caption).foregroundColor(.red)
+                        }
+
+                        // 预设模型快选（检测到的在前，预设在后）
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 6) {
-                                ForEach(presetModels, id: \.self) { m in
-                                    Text(m)
-                                        .font(.system(size: 11))
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(draftModel == m ? Color.accentColor : Color.secondary.opacity(0.15))
-                                        .foregroundColor(draftModel == m ? .white : .primary)
-                                        .cornerRadius(6)
-                                        .onTapGesture { draftModel = m }
+                                ForEach(detectedModels, id: \.self) { m in
+                                    modelChip(m, badge: true)
+                                }
+                                ForEach(presetModels.filter { !detectedModels.contains($0) }, id: \.self) { m in
+                                    modelChip(m, badge: false)
                                 }
                             }
                         }
@@ -98,12 +128,6 @@ struct SettingsView: View {
                         TextField("自定义 model 名称", text: $draftModel)
                             .textFieldStyle(.roundedBorder)
                             .font(.system(size: 13))
-                    }
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("API Key").font(.caption).foregroundStyle(.secondary)
-                        SecureField("输入 API Key", text: $draftKey)
-                            .textFieldStyle(.roundedBorder)
                     }
                 }
 
@@ -174,6 +198,56 @@ struct SettingsView: View {
         }
         .frame(width: 380)
         .onAppear { loadDraft() }
+    }
+
+    private func modelChip(_ m: String, badge: Bool) -> some View {
+        HStack(spacing: 3) {
+            if badge {
+                Circle().fill(Color.green).frame(width: 5, height: 5)
+            }
+            Text(m).font(.system(size: 11))
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(draftModel == m ? Color.accentColor : Color.secondary.opacity(0.15))
+        .foregroundColor(draftModel == m ? .white : .primary)
+        .cornerRadius(6)
+        .onTapGesture { draftModel = m }
+    }
+
+    private func detectModels() {
+        detectStatus = .loading
+        detectedModels = []
+        let base = draftBaseURL.hasSuffix("/") ? String(draftBaseURL.dropLast()) : draftBaseURL
+        guard let url = URL(string: "\(base)/models") else {
+            detectStatus = .error("Base URL 无效")
+            return
+        }
+        var req = URLRequest(url: url)
+        req.setValue("Bearer \(draftKey)", forHTTPHeaderField: "Authorization")
+        req.timeoutInterval = 10
+
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(for: req)
+                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+                // OpenAI-compatible: {"data": [{"id": "model-name"}, ...]}
+                let models = (json?["data"] as? [[String: Any]])?.compactMap { $0["id"] as? String } ?? []
+                await MainActor.run {
+                    if models.isEmpty {
+                        detectStatus = .noModels
+                    } else {
+                        detectedModels = models
+                        detectStatus = .idle
+                        if !models.contains(draftModel) { draftModel = models[0] }
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    detectStatus = .error("检测失败：\(error.localizedDescription)")
+                }
+            }
+        }
     }
 
     private func loadDraft() {

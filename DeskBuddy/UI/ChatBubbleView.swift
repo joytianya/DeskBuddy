@@ -117,7 +117,7 @@ struct ChatBubbleView: View {
                 }
             } catch {
                 await MainActor.run {
-                    messages.append((role: "assistant", text: "出错了，检查一下 API Key？"))
+                    messages.append((role: "assistant", text: "出错了：\(error.localizedDescription)"))
                     aiBridge.isLoading = false
                 }
             }

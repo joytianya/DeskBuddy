@@ -14,6 +14,7 @@ private class PetPanel: NSPanel {
 class PetWindowController: NSWindowController {
     private(set) var petEngine: PetEngine
     private var eventMonitor: Any?
+    private var localMouseMonitor: Any?
     private var globalMouseMonitor: Any?
     private var settingsWindow: NSWindow?
 
@@ -57,6 +58,7 @@ class PetWindowController: NSWindowController {
 
     deinit {
         if let m = eventMonitor { NSEvent.removeMonitor(m) }
+        if let m = localMouseMonitor { NSEvent.removeMonitor(m) }
         if let m = globalMouseMonitor { NSEvent.removeMonitor(m) }
     }
 
@@ -101,14 +103,23 @@ class PetWindowController: NSWindowController {
     // MARK: - Global mouse monitor (proximity & speed)
 
     private func setupGlobalMouseMonitor() {
+        // 全局监控：监控其他应用的鼠标移动
         globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(
             matching: [.mouseMoved, .leftMouseDragged]
+        ) { [weak self] _ in
+            self?.handleMouseProximity()
+        }
+
+        // 本地监控：监控本应用内的鼠标移动（补充全局监控的盲区）
+        localMouseMonitor = NSEvent.addLocalMonitorForEvents(
+            matching: [.mouseMoved, .leftMouseDragged]
         ) { [weak self] event in
-            self?.handleGlobalMouse(event)
+            self?.handleMouseProximity()
+            return event
         }
     }
 
-    private func handleGlobalMouse(_ event: NSEvent) {
+    private func handleMouseProximity() {
         guard let window = window else { return }
         let mouseScreen = NSEvent.mouseLocation
         let petCenter = NSPoint(x: window.frame.midX, y: window.frame.midY)
@@ -129,8 +140,11 @@ class PetWindowController: NSWindowController {
         lastMousePos = mouseScreen
         lastMouseTime = now
 
+        print("🖱️ Mouse: distance=\(Int(distance)), speed=\(Int(speed)), window=\(window.frame), petCenter=\(petCenter), mouse=\(mouseScreen)")
+
         // 只在鼠标足够近时触发互动（< 150pt）
         if distance < 150 {
+            print("✅ onMouseNear triggered")
             petEngine.onMouseNear(distance: distance, mouseX: mouseScreen.x, speed: speed)
         }
     }

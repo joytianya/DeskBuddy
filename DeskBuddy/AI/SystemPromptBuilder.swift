@@ -28,6 +28,7 @@ struct SystemPromptBuilder {
         Relationship with user: \(intimacyDesc).
         Keep responses short (1-3 sentences), warm, and in character.
         Match your tone to your emotional state.
+        IMPORTANT: Always reply in the same language the user writes in. If the user writes in Chinese, reply in Chinese. If English, reply in English.
         """
     }
 }

@@ -8,6 +8,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var cancellables = Set<AnyCancellable>()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // 单例检查：如果已有实例运行，激活它并退出当前实例
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: Bundle.main.bundleIdentifier!)
+        if runningApps.count > 1 {
+            // 找到其他实例并激活
+            for app in runningApps where app != NSRunningApplication.current {
+                app.activate(options: [.activateIgnoringOtherApps])
+                break
+            }
+            NSApp.terminate(nil)
+            return
+        }
+
         NSApp.setActivationPolicy(.accessory)
         windowController = PetWindowController(emotionEngine: emotionEngine)
         windowController?.showWindow(nil)

@@ -38,13 +38,14 @@ class EmotionEngine: ObservableObject {
 
     func computeState(timeScore: Double, intimacyScore: Double, systemScore: Double) -> PetState {
         let combined = timeScore * 0.3 + intimacyScore * 0.4 + systemScore * 0.3
+        // 新阈值分布（更平滑）
         switch combined {
-        case 0.85...:  return .excited
-        case 0.65...: return .happy
-        case 0.5...:  return .idle
-        case 0.35...: return .bored
-        case 0.2...:  return .sleepy
-        default:      return .anxious
+        case 0.80...:  return .excited   // 很高兴（跳）
+        case 0.60...: return .happy      // 开心
+        case 0.45...: return .idle       // 正常
+        case 0.30...: return .bored      // 无聊
+        case 0.15...: return .sleepy     // 困倦
+        default:      return .anxious    // 紧张（系统压力大）
         }
     }
 }

@@ -94,6 +94,9 @@ struct ChatBubbleView: View {
         .onReceive(NotificationCenter.default.publisher(for: .toggleChat)) { _ in
             withAnimation(.spring()) { isVisible.toggle() }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .hideChat)) { _ in
+            if isVisible { withAnimation(.spring()) { isVisible = false } }
+        }
         .onExitCommand {
             if isVisible { withAnimation(.spring()) { isVisible = false } }
         }

@@ -27,8 +27,7 @@ enum PetState: Int, CaseIterable {
         case .excited: return 8  // Jump
         case .sleepy:  return 6  // Sleep
         case .anxious: return 9  // Scared
-        case .lying:   return 6  // Sleep（趴着休息，主要姿态）
-        // 注：Paw (row 7) 是前爪着地，bored 时使用
+        case .lying:   return 6  // Sleep（趴着休息，主姿态；PetEngine 会随机切换 Paw）
         }
     }
 

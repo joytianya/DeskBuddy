@@ -5,6 +5,7 @@ import SwiftUI
 extension Notification.Name {
     static let openSettings = Notification.Name("DeskBuddy.openSettings")
     static let toggleChat   = Notification.Name("DeskBuddy.toggleChat")
+    static let hideChat     = Notification.Name("DeskBuddy.hideChat")
 }
 
 private class PetPanel: NSPanel {
@@ -116,6 +117,16 @@ class PetWindowController: NSWindowController {
         ) { [weak self] event in
             self?.handleMouseProximity()
             return event
+        }
+
+        // 全局点击监控：点击窗口外时隐藏聊天框
+        NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
+            guard let window = self?.window else { return }
+            let mouseLoc = NSEvent.mouseLocation
+            // 如果点击不在窗口内，隐藏聊天框
+            if !window.frame.contains(mouseLoc) {
+                NotificationCenter.default.post(name: .hideChat, object: nil)
+            }
         }
     }
 

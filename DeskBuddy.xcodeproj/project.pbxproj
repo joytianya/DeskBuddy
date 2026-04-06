@@ -21,16 +21,17 @@
 		71059FEE585F1B7AF553C295 /* AIBridgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D277DCFE77AE705830275992 /* AIBridgeTests.swift */; };
 		76E766675A48D9384E5BB0D7 /* VoiceOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E322CB9C659DD5445E761014 /* VoiceOutput.swift */; };
 		77B9C80022179EE9F0237F8A /* PetWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561032E33A6E9F6CFE815A5 /* PetWindowController.swift */; };
+		794F144290BEA9D272F0C3DA /* AnimationRhythm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0947E64CF288BA59A1A5E403 /* AnimationRhythm.swift */; };
 		7CE35D17693E67444E030A2B /* TimeSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A73B32D5645B30BE0C63A9 /* TimeSignal.swift */; };
 		93703FF33ED493FD879A9AF2 /* EmotionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A3C264294B30D5B5C23547 /* EmotionEngineTests.swift */; };
 		9751718EBF2D57A244815540 /* VoiceInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF5711F6EA3732D5CFCA30 /* VoiceInput.swift */; };
+		A98B8AC774EB488B475AC1B5 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9223E784DAFB09360F57C9C /* ConfigStore.swift */; };
 		A9EED6920565B0B2494B0E2F /* AIBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA24405C12B2AD51D95F5D0 /* AIBridge.swift */; };
 		BF398E620DF51FBBA6E2A653 /* SpriteLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6155145D5B22665A0EA43954 /* SpriteLoader.swift */; };
 		BFBAC3A3BD1FA647BB02B79F /* IntimacySignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADF99A2DCF90A27F5449015 /* IntimacySignal.swift */; };
 		EEF130A7739DFC059E0925E8 /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103B12FE020F55C54122C2E0 /* PetState.swift */; };
 		EFBC2E834C916892DB9D83D2 /* SystemPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A773FEDA97DCFB2FB3E7CD /* SystemPromptBuilder.swift */; };
 		F3893C0612F2D9EF691872A4 /* EmotionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E39481C042B33F63D09394 /* EmotionEngine.swift */; };
-			AAAA1B2C3D4E5F6789012345 /* AnimationRhythm.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBB1B2C3D4E5F6789012345 /* AnimationRhythm.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		0612DE7D7D1A267C8CFEDEF0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0947E64CF288BA59A1A5E403 /* AnimationRhythm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationRhythm.swift; sourceTree = "<group>"; };
 		0C56C40E144AC480A160E5B3 /* SystemSignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSignal.swift; sourceTree = "<group>"; };
 		0D0974C218E6F658725092DF /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Speech.framework; sourceTree = "<group>"; };
 		0E5A1035D9C0ADACE5CD65E7 /* ChatBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubbleView.swift; sourceTree = "<group>"; };
@@ -69,10 +71,10 @@
 		D8DBA3591A676CF1D1DC21E1 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
 		E28649436F3AD9F27B7E4625 /* PetEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetEngine.swift; sourceTree = "<group>"; };
 		E322CB9C659DD5445E761014 /* VoiceOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceOutput.swift; sourceTree = "<group>"; };
+		E9223E784DAFB09360F57C9C /* ConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
 		E9CF5711F6EA3732D5CFCA30 /* VoiceInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInput.swift; sourceTree = "<group>"; };
 		F1D75799F0ECD08111989F04 /* PetEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetEngineTests.swift; sourceTree = "<group>"; };
 		FADF99A2DCF90A27F5449015 /* IntimacySignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntimacySignal.swift; sourceTree = "<group>"; };
-			BBBB1B2C3D4E5F6789012345 /* AnimationRhythm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationRhythm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,13 +89,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		10582A95F364F4752705605E /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				E9223E784DAFB09360F57C9C /* ConfigStore.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		14A6DDF080374C623C19AF44 /* Pet */ = {
 			isa = PBXGroup;
 			children = (
+				0947E64CF288BA59A1A5E403 /* AnimationRhythm.swift */,
 				E28649436F3AD9F27B7E4625 /* PetEngine.swift */,
 				103B12FE020F55C54122C2E0 /* PetState.swift */,
 				6155145D5B22665A0EA43954 /* SpriteLoader.swift */,
-				BBBB1B2C3D4E5F6789012345 /* AnimationRhythm.swift */,
 			);
 			path = Pet;
 			sourceTree = "<group>";
@@ -107,6 +117,7 @@
 				DA5F70A82EA719798CA73B9A /* AI */,
 				D36C441046FBE7603705BF0A /* App */,
 				940E07D2D70C98CB24C1CCA6 /* Assets */,
+				10582A95F364F4752705605E /* Config */,
 				F87FAF644C88402D3F82A859 /* Emotion */,
 				14A6DDF080374C623C19AF44 /* Pet */,
 				52B8866740D135B2F1391D0B /* UI */,
@@ -327,9 +338,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9EED6920565B0B2494B0E2F /* AIBridge.swift in Sources */,
-				AAAA1B2C3D4E5F6789012345 /* AnimationRhythm.swift in Sources */,
+				794F144290BEA9D272F0C3DA /* AnimationRhythm.swift in Sources */,
 				319469BFFB82DCDAC6EBC326 /* AppDelegate.swift in Sources */,
 				2011B284CFC52C8F79C78F21 /* ChatBubbleView.swift in Sources */,
+				A98B8AC774EB488B475AC1B5 /* ConfigStore.swift in Sources */,
 				1B9158C753D71959F2CAAB83 /* ConversationStore.swift in Sources */,
 				69D786C472966C6D34FD41C9 /* DeskBuddyApp.swift in Sources */,
 				F3893C0612F2D9EF691872A4 /* EmotionEngine.swift in Sources */,

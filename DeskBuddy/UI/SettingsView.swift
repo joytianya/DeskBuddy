@@ -1,14 +1,43 @@
 // DeskBuddy/UI/SettingsView.swift
 import SwiftUI
 
+/// AppSettings 包装 ConfigStore，提供 ObservableObject
 class AppSettings: ObservableObject {
-    @AppStorage("apiKey") var apiKey = ""
-    @AppStorage("aiBaseURL") var aiBaseURL = "https://api.openai.com/v1"
-    @AppStorage("aiModel") var aiModel = "gpt-4o-mini"
-    @AppStorage("voiceEnabled") var voiceEnabled = false
-    @AppStorage("petScale") var petScale: Double = 4.0
-    @AppStorage("selectedSkin") var selectedSkin = "cat-sheet"
-    @AppStorage("petColorHex") var petColorHex = "#FFFFFF"
+    @Published var apiKey: String {
+        didSet { ConfigStore.shared.apiKey = apiKey }
+    }
+    @Published var aiBaseURL: String {
+        didSet { ConfigStore.shared.aiBaseURL = aiBaseURL }
+    }
+    @Published var aiModel: String {
+        didSet { ConfigStore.shared.aiModel = aiModel }
+    }
+    @Published var voiceEnabled: Bool {
+        didSet { ConfigStore.shared.voiceEnabled = voiceEnabled }
+    }
+    @Published var petScale: Double {
+        didSet { ConfigStore.shared.petScale = petScale }
+    }
+    @Published var selectedSkin: String {
+        didSet { ConfigStore.shared.selectedSkin = selectedSkin }
+    }
+    @Published var petColorHex: String {
+        didSet { ConfigStore.shared.petColorHex = petColorHex }
+    }
+
+    init() {
+        let store = ConfigStore.shared
+        // 迁移旧的 UserDefaults 配置
+        store.migrateFromUserDefaults()
+        // 初始化
+        apiKey = store.apiKey
+        aiBaseURL = store.aiBaseURL
+        aiModel = store.aiModel
+        voiceEnabled = store.voiceEnabled
+        petScale = store.petScale
+        selectedSkin = store.selectedSkin
+        petColorHex = store.petColorHex
+    }
 }
 
 struct SettingsView: View {

@@ -10,10 +10,8 @@ enum AIError: Error {
 class AIBridge: ObservableObject {
     @Published var isLoading = false
 
-    private let store = ConversationStore.shared
-    @AppStorage("apiKey") var apiKey = ""
-    @AppStorage("aiBaseURL") private var aiBaseURL = "https://api.openai.com/v1"
-    @AppStorage("aiModel") private var aiModel = "gpt-4o-mini"
+    private let conversationStore = ConversationStore.shared
+    private var config: ConfigStore { ConfigStore.shared }
 
     private var session: URLSession = {
         let config = URLSessionConfiguration.default
@@ -26,9 +24,9 @@ class AIBridge: ObservableObject {
         AsyncThrowingStream { continuation in
             Task {
                 do {
-                    self.store.save(role: "user", content: userMessage)
+                    self.conversationStore.save(role: "user", content: userMessage)
                     let systemPrompt = SystemPromptBuilder.build(state: state, intimacyScore: intimacyScore)
-                    let history = self.store.recentMessages(limit: 20)
+                    let history = self.conversationStore.recentMessages(limit: 20)
                     let request = try self.buildRequest(system: systemPrompt, history: history)
 
                     let (bytes, response) = try await self.session.bytes(for: request)
@@ -56,7 +54,7 @@ class AIBridge: ObservableObject {
                         continuation.yield(chunk)
                     }
 
-                    self.store.save(role: "assistant", content: fullContent)
+                    self.conversationStore.save(role: "assistant", content: fullContent)
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
@@ -66,6 +64,10 @@ class AIBridge: ObservableObject {
     }
 
     private func buildRequest(system: String, history: [(role: String, content: String)]) throws -> URLRequest {
+        let apiKey = config.apiKey
+        let aiBaseURL = config.aiBaseURL
+        let aiModel = config.aiModel
+
         guard !apiKey.isEmpty else { throw AIError.missingAPIKey }
         let base = aiBaseURL.hasSuffix("/") ? String(aiBaseURL.dropLast()) : aiBaseURL
         guard let url = URL(string: "\(base)/chat/completions") else { throw AIError.missingBaseURL }

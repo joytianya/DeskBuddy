@@ -1,6 +1,7 @@
 // DeskBuddy/Emotion/SystemSignal.swift
 import Foundation
 import CoreGraphics
+import Darwin
 
 struct SystemSignal {
     static func score(cpuUsage: Double, memoryPressure: Double, idleMinutes: Int) -> Double {
@@ -27,17 +28,11 @@ struct SystemSignal {
     }
 
     static func currentMemoryPressure() -> Double {
-        var stats = vm_statistics64()
-        var count = mach_msg_type_number_t(MemoryLayout<vm_statistics64>.size / MemoryLayout<integer_t>.size)
-        let result = withUnsafeMutablePointer(to: &stats) {
-            $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
-                host_statistics64(mach_host_self(), HOST_VM_INFO64, $0, &count)
-            }
-        }
-        guard result == KERN_SUCCESS else { return 0.3 }
-        let total = Double(stats.free_count + stats.active_count + stats.inactive_count + stats.wire_count)
-        let used = Double(stats.active_count + stats.wire_count)
-        return total > 0 ? used / total : 0.3
+        // kern.memorystatus_level: 100=充裕, ~25=warning, ~5=critical
+        var level: Int32 = 100
+        var size = MemoryLayout<Int32>.size
+        sysctlbyname("kern.memorystatus_level", &level, &size, nil, 0)
+        return 1.0 - (Double(max(0, min(100, level))) / 100.0)
     }
 
     static func currentIdleMinutes() -> Int {

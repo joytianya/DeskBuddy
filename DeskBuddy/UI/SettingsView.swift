@@ -4,7 +4,7 @@ import SwiftUI
 class AppSettings: ObservableObject {
     @AppStorage("apiKey") var apiKey = ""
     @AppStorage("aiBaseURL") var aiBaseURL = "https://api.openai.com/v1"
-    @AppStorage("aiModel") var aiModel = "qwen-plus"
+    @AppStorage("aiModel") var aiModel = "gpt-4o-mini"
     @AppStorage("voiceEnabled") var voiceEnabled = false
     @AppStorage("petScale") var petScale: Double = 4.0
     @AppStorage("selectedSkin") var selectedSkin = "cat-sheet"

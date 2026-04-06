@@ -88,8 +88,6 @@ class PetEngine: SKScene {
     func onMouseNear(distance: CGFloat, mouseX: CGFloat, speed: CGFloat) {
         guard let petNode = petNode else { return }
 
-        print("🐾 onMouseNear: distance=\(Int(distance)), mouseX=\(Int(mouseX)), speed=\(Int(speed))")
-
         // 根据鼠标在宠物左/右翻转朝向
         let petScreenX = view?.window?.frame.midX ?? 0
         let facingRight = mouseX > petScreenX
@@ -99,18 +97,14 @@ class PetEngine: SKScene {
         if petNode.xScale != targetScaleX {
             petNode.removeAction(forKey: "flip")
             petNode.xScale = targetScaleX
-            print("🔄 Flipped: facingRight=\(facingRight)")
         }
 
         if distance < 80 {
-            print("📏 Close enough: distance=\(Int(distance)) < 80")
             if speed > 400 {
                 // 鼠标快速移动 → excited
-                print("⚡ Excited triggered: speed=\(Int(speed)) > 400")
                 triggerInteraction(state: .excited, duration: 1.5)
             } else if distance < 40 {
                 // 鼠标非常近 → clingy
-                print("💕 Clingy triggered: distance=\(Int(distance)) < 40")
                 triggerInteraction(state: .clingy, duration: 2.0)
             }
         }

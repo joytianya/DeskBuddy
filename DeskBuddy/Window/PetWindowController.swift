@@ -151,11 +151,8 @@ class PetWindowController: NSWindowController {
         lastMousePos = mouseScreen
         lastMouseTime = now
 
-        print("🖱️ Mouse: distance=\(Int(distance)), speed=\(Int(speed)), window=\(window.frame), petCenter=\(petCenter), mouse=\(mouseScreen)")
-
         // 只在鼠标足够近时触发互动（< 150pt）
         if distance < 150 {
-            print("✅ onMouseNear triggered")
             petEngine.onMouseNear(distance: distance, mouseX: mouseScreen.x, speed: speed)
         }
     }

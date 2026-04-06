@@ -162,8 +162,9 @@ class PetWindowController: NSWindowController {
         w.title = "设置"
         w.isReleasedWhenClosed = false
         let settings = AppSettings()
-        w.contentView = NSHostingView(rootView: SettingsView(settings: settings, onDismiss: { [weak w] in
+        w.contentView = NSHostingView(rootView: SettingsView(settings: settings, onDismiss: { [weak w, weak self] in
             w?.close()
+            self?.window?.orderFront(nil)
         }))
         w.center()
         w.makeKeyAndOrderFront(nil)

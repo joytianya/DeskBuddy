@@ -21,7 +21,7 @@ struct ChatBubbleView: View {
                                 ForEach(Array(messages.enumerated()), id: \.offset) { _, msg in
                                     HStack {
                                         if msg.role == "assistant" {
-                                            Text(msg.text)
+                                            Text(msg.text.isEmpty ? "…" : msg.text)
                                                 .padding(8)
                                                 .background(Color.white.opacity(0.15))
                                                 .foregroundColor(.white)
@@ -45,6 +45,9 @@ struct ChatBubbleView: View {
                         }
                         .onChange(of: messages.count) { _ in
                             withAnimation { proxy.scrollTo("bottom") }
+                        }
+                        .onChange(of: messages.last?.text) { _ in
+                            proxy.scrollTo("bottom")
                         }
                     }
                     .frame(width: 260, height: 180)
@@ -101,23 +104,28 @@ struct ChatBubbleView: View {
         let text = inputText
         inputText = ""
         messages.append((role: "user", text: text))
+        messages.append((role: "assistant", text: ""))
+        let idx = messages.count - 1
         aiBridge.isLoading = true
         Task {
             do {
-                let reply = try await aiBridge.send(
+                var full = ""
+                for try await chunk in aiBridge.sendStream(
                     userMessage: text,
                     state: emotionEngine.currentState,
                     intimacyScore: 0.5
-                )
+                ) {
+                    full += chunk
+                    await MainActor.run { messages[idx] = (role: "assistant", text: full) }
+                }
                 await MainActor.run {
-                    messages.append((role: "assistant", text: reply))
-                    if voiceEnabled { voiceOutput.speak(reply) }
+                    if voiceEnabled { voiceOutput.speak(full) }
                     aiBridge.isLoading = false
                     emotionEngine.recordChat()
                 }
             } catch {
                 await MainActor.run {
-                    messages.append((role: "assistant", text: "出错了：\(error.localizedDescription)"))
+                    messages[idx] = (role: "assistant", text: "出错了：\(error.localizedDescription)")
                     aiBridge.isLoading = false
                 }
             }

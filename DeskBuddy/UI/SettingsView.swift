@@ -79,6 +79,7 @@ struct SettingsView: View {
                         Text("Base URL").font(.caption).foregroundStyle(.secondary)
                         TextField("", text: $draftBaseURL)
                             .textFieldStyle(.roundedBorder)
+                            .frame(maxWidth: .infinity)
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
@@ -229,9 +230,13 @@ struct SettingsView: View {
 
         Task {
             do {
-                let (data, _) = try await URLSession.shared.data(for: req)
-                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                // OpenAI-compatible: {"data": [{"id": "model-name"}, ...]}
+                let (data, response) = try await URLSession.shared.data(for: req)
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                guard statusCode == 200, !data.isEmpty else {
+                    await MainActor.run { detectStatus = .noModels }
+                    return
+                }
+                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 let models = (json?["data"] as? [[String: Any]])?.compactMap { $0["id"] as? String } ?? []
                 await MainActor.run {
                     if models.isEmpty {
@@ -243,9 +248,7 @@ struct SettingsView: View {
                     }
                 }
             } catch {
-                await MainActor.run {
-                    detectStatus = .error("检测失败：\(error.localizedDescription)")
-                }
+                await MainActor.run { detectStatus = .noModels }
             }
         }
     }

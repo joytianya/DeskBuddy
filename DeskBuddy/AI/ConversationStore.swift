@@ -55,8 +55,9 @@ class ConversationStore {
     }
 
     func clearAll() {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Message")
-        let delete = NSBatchDeleteRequest(fetchRequest: request)
-        try? context.execute(delete)
+        let request = NSFetchRequest<NSManagedObject>(entityName: "Message")
+        let objects = (try? context.fetch(request)) ?? []
+        objects.forEach { context.delete($0) }
+        try? context.save()
     }
 }

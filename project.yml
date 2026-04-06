@@ -18,11 +18,15 @@ targets:
       - path: DeskBuddy
         excludes:
           - "**/.DS_Store"
+    dependencies:
+      - framework: Speech.framework
+        embed: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.deskbuddy.app
         INFOPLIST_FILE: DeskBuddy/Info.plist
         CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: DeskBuddy/DeskBuddy.entitlements
     info:
       path: DeskBuddy/Info.plist
       properties:
@@ -47,3 +51,4 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.deskbuddy.tests
+        GENERATE_INFOPLIST_FILE: YES

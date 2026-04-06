@@ -21,11 +21,13 @@ struct PetWindowView: View {
             SpriteView(scene: engine, options: [.allowsTransparency])
                 .frame(width: 128, height: 128)
                 .background(Color.clear)
-                .contextMenu {
-                    Button("设置") { showSettings = true }
-                    Divider()
-                    Button("退出", role: .destructive) { NSApp.terminate(nil) }
+                .colorMultiply(Color(hex: settings.petColorHex) ?? .white)
+                .onAppear {
+                    engine.setSkin(settings.selectedSkin)
+                    engine.setPetScale(CGFloat(settings.petScale))
                 }
+                .onChange(of: settings.selectedSkin) { engine.setSkin($0) }
+                .onChange(of: settings.petScale) { engine.setPetScale(CGFloat($0)) }
                 .sheet(isPresented: $showSettings) {
                     SettingsView(settings: settings)
                 }
@@ -33,5 +35,8 @@ struct PetWindowView: View {
             ChatBubbleView(aiBridge: aiBridge, emotionEngine: emotionEngine, voiceEnabled: settings.voiceEnabled)
         }
         .frame(width: 400, height: 400)
+        .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
+            showSettings = true
+        }
     }
 }

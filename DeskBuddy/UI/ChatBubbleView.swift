@@ -15,30 +15,36 @@ struct ChatBubbleView: View {
         VStack(alignment: .trailing, spacing: 0) {
             if isVisible {
                 VStack(alignment: .leading, spacing: 8) {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 6) {
-                            ForEach(Array(messages.enumerated()), id: \.offset) { _, msg in
-                                HStack {
-                                    if msg.role == "assistant" {
-                                        Text(msg.text)
-                                            .padding(8)
-                                            .background(Color.white.opacity(0.9))
-                                            .cornerRadius(10)
-                                            .font(.system(size: 13))
-                                        Spacer()
-                                    } else {
-                                        Spacer()
-                                        Text(msg.text)
-                                            .padding(8)
-                                            .background(Color.blue.opacity(0.8))
-                                            .foregroundColor(.white)
-                                            .cornerRadius(10)
-                                            .font(.system(size: 13))
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 6) {
+                                ForEach(Array(messages.enumerated()), id: \.offset) { _, msg in
+                                    HStack {
+                                        if msg.role == "assistant" {
+                                            Text(msg.text)
+                                                .padding(8)
+                                                .background(Color.white.opacity(0.9))
+                                                .cornerRadius(10)
+                                                .font(.system(size: 13))
+                                            Spacer()
+                                        } else {
+                                            Spacer()
+                                            Text(msg.text)
+                                                .padding(8)
+                                                .background(Color.blue.opacity(0.8))
+                                                .foregroundColor(.white)
+                                                .cornerRadius(10)
+                                                .font(.system(size: 13))
+                                        }
                                     }
                                 }
+                                Color.clear.frame(height: 1).id("bottom")
                             }
+                            .padding(8)
                         }
-                        .padding(8)
+                        .onChange(of: messages.count) { _ in
+                            withAnimation { proxy.scrollTo("bottom") }
+                        }
                     }
                     .frame(width: 260, height: 180)
                     .background(Color.black.opacity(0.6))
@@ -77,11 +83,15 @@ struct ChatBubbleView: View {
                 .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .bottomTrailing)))
             }
 
-            Rectangle()
-                .fill(Color.clear)
+            // Invisible hit area kept for layout spacing only — tap handled via notification
+            Color.clear
                 .frame(width: 128, height: 128)
-                .contentShape(Rectangle())
-                .onTapGesture { withAnimation(.spring()) { isVisible.toggle() } }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .toggleChat)) { _ in
+            withAnimation(.spring()) { isVisible.toggle() }
+        }
+        .onExitCommand {
+            if isVisible { withAnimation(.spring()) { isVisible = false } }
         }
     }
 

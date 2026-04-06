@@ -14,6 +14,7 @@ class EmotionEngine: ObservableObject {
 
     func start() {
         timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            self?.intimacy.tick(idleMinutes: SystemSignal.currentIdleMinutes())
             self?.update()
         }
         update()

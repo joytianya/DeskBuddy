@@ -64,3 +64,5 @@ fastlane/test_output
 # DeskBuddy extras
 .superpowers/
 *.xcuserstate
+.DS_Store
+**/.DS_Store

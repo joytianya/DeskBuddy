@@ -11,7 +11,7 @@ class AIBridge: ObservableObject {
     @Published var isLoading = false
 
     private let store = ConversationStore.shared
-    @AppStorage("apiKey") var apiKey = "sk-83d380f5e8294b0596e832479a1c248c"
+    @AppStorage("apiKey") var apiKey = ""
     @AppStorage("aiBaseURL") private var aiBaseURL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     @AppStorage("aiModel") private var aiModel = "qwen3.5-plus"
 

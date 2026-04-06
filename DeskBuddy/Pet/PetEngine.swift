@@ -48,7 +48,7 @@ class PetEngine: SKScene {
         // 空闲(lying)状态：80% 趴着(Sleep row 6), 20% 前爪着地(Paw row 7)
         let rowOverride: Int?
         if state == .lying {
-            rowOverride = Int.random(in: 0..<10) < 8 ? 6 : 7  // 80% Sleep, 20% Paw
+            rowOverride = Int.random(in: 0..<100) < 80 ? 6 : 7  // 80% Sleep (row 6), 20% Paw (row 7)
         } else {
             rowOverride = nil
         }

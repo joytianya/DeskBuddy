@@ -23,7 +23,8 @@ struct ChatBubbleView: View {
                                         if msg.role == "assistant" {
                                             Text(msg.text)
                                                 .padding(8)
-                                                .background(Color.white.opacity(0.9))
+                                                .background(Color.white.opacity(0.15))
+                                                .foregroundColor(.white)
                                                 .cornerRadius(10)
                                                 .font(.system(size: 13))
                                             Spacer()

@@ -20,11 +20,10 @@ struct SettingsView: View {
     @State private var draftModel: String = ""
     @State private var draftColorHex: String = ""
     @State private var pickedColor: Color = .white
-    @State private var detectedModels: [String] = []
     @State private var detectStatus: DetectStatus = .idle
     @State private var pingStatus: PingStatus = .idle
 
-    enum DetectStatus { case idle, loading, noModels }
+    enum DetectStatus { case idle, loading, ok, fail(String) }
     enum PingStatus { case idle, loading, ok, fail(String) }
 
     private let presetModels = [
@@ -93,23 +92,28 @@ struct SettingsView: View {
                                 if case .loading = detectStatus {
                                     ProgressView().scaleEffect(0.6).frame(width: 14, height: 14)
                                 } else {
-                                    Text("检测模型").font(.caption)
+                                    Text("测试模型").font(.caption)
                                 }
                             }
                             .buttonStyle(.plain)
                             .foregroundColor(.accentColor)
-                            .disabled(draftKey.isEmpty || draftBaseURL.isEmpty || {
+                            .disabled(draftKey.isEmpty || draftBaseURL.isEmpty || draftModel.isEmpty || {
                                 if case .loading = detectStatus { return true }
                                 return false
                             }())
                         }
-                        if case .noModels = detectStatus {
-                            Text("未检测到模型列表，请手动输入").font(.caption).foregroundStyle(.secondary)
+                        switch detectStatus {
+                        case .ok:
+                            Label("模型可用", systemImage: "checkmark.circle.fill")
+                                .font(.caption).foregroundColor(.green)
+                        case .fail(let msg):
+                            Label(msg, systemImage: "xmark.circle.fill")
+                                .font(.caption).foregroundColor(.red).lineLimit(2)
+                        default: EmptyView()
                         }
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 6) {
-                                ForEach(detectedModels, id: \.self) { modelChip($0, badge: true) }
-                                ForEach(presetModels.filter { !detectedModels.contains($0) }, id: \.self) { modelChip($0, badge: false) }
+                                ForEach(presetModels, id: \.self) { modelChip($0, badge: false) }
                             }
                         }
                         TextField("自定义 model 名称", text: $draftModel)
@@ -172,7 +176,7 @@ struct SettingsView: View {
         .onAppear { loadDraft() }
     }
 
-    private func modelChip(_ m: String, badge: Bool) -> some View {
+    private func modelChip(_ m: String, badge: Bool = false) -> some View {
         HStack(spacing: 3) {
             if badge { Circle().fill(Color.green).frame(width: 5, height: 5) }
             Text(m).font(.system(size: 11))
@@ -218,31 +222,34 @@ struct SettingsView: View {
 
     private func detectModels() {
         detectStatus = .loading
-        detectedModels = []
         let base = draftBaseURL.hasSuffix("/") ? String(draftBaseURL.dropLast()) : draftBaseURL
-        guard let url = URL(string: "\(base)/models") else { detectStatus = .noModels; return }
+        guard let url = URL(string: "\(base)/chat/completions") else {
+            detectStatus = .fail("URL 无效"); return
+        }
         var req = URLRequest(url: url)
+        req.httpMethod = "POST"
         req.setValue("Bearer \(draftKey)", forHTTPHeaderField: "Authorization")
-        req.timeoutInterval = 10
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.timeoutInterval = 15
+        let body: [String: Any] = [
+            "model": draftModel,
+            "max_tokens": 10,
+            "messages": [["role": "user", "content": "hi"]]
+        ]
+        req.httpBody = try? JSONSerialization.data(withJSONObject: body)
         Task {
             do {
                 let (data, response) = try await URLSession.shared.data(for: req)
                 let code = (response as? HTTPURLResponse)?.statusCode ?? 0
-                guard code == 200, !data.isEmpty else {
-                    await MainActor.run { detectStatus = .noModels }; return
-                }
                 let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
-                let models = (json?["data"] as? [[String: Any]])?.compactMap { $0["id"] as? String } ?? []
+                let errMsg = (json?["error"] as? [String: Any])?["message"] as? String
                 await MainActor.run {
-                    if models.isEmpty { detectStatus = .noModels }
-                    else {
-                        detectedModels = models
-                        detectStatus = .idle
-                        if !models.contains(draftModel) { draftModel = models[0] }
-                    }
+                    if code == 200 { detectStatus = .ok }
+                    else if let msg = errMsg { detectStatus = .fail(String(msg.prefix(50))) }
+                    else { detectStatus = .fail("HTTP \(code)") }
                 }
             } catch {
-                await MainActor.run { detectStatus = .noModels }
+                await MainActor.run { detectStatus = .fail("无法连接") }
             }
         }
     }

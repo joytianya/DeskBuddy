@@ -25,8 +25,10 @@ struct SettingsView: View {
     @State private var pickedColor: Color = .white
     @State private var detectedModels: [String] = []
     @State private var detectStatus: DetectStatus = .idle
+    @State private var pingStatus: PingStatus = .idle
 
     enum DetectStatus { case idle, loading, noModels, error(String) }
+    enum PingStatus { case idle, loading, ok, fail(String) }
 
     private let providers = ["OpenAI Compatible", "Claude Compatible"]
     private let presetModelsByProvider: [String: [String]] = [
@@ -83,7 +85,35 @@ struct SettingsView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("API Key").font(.caption).foregroundStyle(.secondary)
+                        HStack {
+                            Text("API Key").font(.caption).foregroundStyle(.secondary)
+                            Spacer()
+                            // Ping status indicator
+                            switch pingStatus {
+                            case .ok:
+                                Label("连通", systemImage: "checkmark.circle.fill")
+                                    .font(.caption).foregroundColor(.green)
+                            case .fail(let msg):
+                                Label(msg, systemImage: "xmark.circle.fill")
+                                    .font(.caption).foregroundColor(.red)
+                                    .lineLimit(1)
+                            default:
+                                EmptyView()
+                            }
+                            Button(action: pingAPI) {
+                                if case .loading = pingStatus {
+                                    ProgressView().scaleEffect(0.6).frame(width: 14, height: 14)
+                                } else {
+                                    Text("测试连接").font(.caption)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundColor(.accentColor)
+                            .disabled(draftKey.isEmpty || draftBaseURL.isEmpty || {
+                                if case .loading = pingStatus { return true }
+                                return false
+                            }())
+                        }
                         SecureField("输入 API Key", text: $draftKey)
                             .textFieldStyle(.roundedBorder)
                     }
@@ -214,6 +244,65 @@ struct SettingsView: View {
         .foregroundColor(draftModel == m ? .white : .primary)
         .cornerRadius(6)
         .onTapGesture { draftModel = m }
+    }
+
+    private func pingAPI() {
+        pingStatus = .loading
+        let base = draftBaseURL.hasSuffix("/") ? String(draftBaseURL.dropLast()) : draftBaseURL
+        let isClaude = draftProvider == "Claude Compatible"
+
+        Task {
+            do {
+                var req: URLRequest
+                if isClaude {
+                    guard let url = URL(string: "\(base)/messages") else {
+                        await MainActor.run { pingStatus = .fail("URL 无效") }
+                        return
+                    }
+                    req = URLRequest(url: url)
+                    req.httpMethod = "POST"
+                    req.setValue(draftKey, forHTTPHeaderField: "x-api-key")
+                    req.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+                    req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    let model = draftModel.isEmpty ? "claude-haiku-4-5-20251001" : draftModel
+                    let body: [String: Any] = ["model": model, "max_tokens": 5,
+                                               "messages": [["role": "user", "content": "hi"]]]
+                    req.httpBody = try JSONSerialization.data(withJSONObject: body)
+                } else {
+                    guard let url = URL(string: "\(base)/chat/completions") else {
+                        await MainActor.run { pingStatus = .fail("URL 无效") }
+                        return
+                    }
+                    req = URLRequest(url: url)
+                    req.httpMethod = "POST"
+                    req.setValue("Bearer \(draftKey)", forHTTPHeaderField: "Authorization")
+                    req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    let model = draftModel.isEmpty ? "gpt-4o-mini" : draftModel
+                    let body: [String: Any] = ["model": model, "max_tokens": 5,
+                                               "messages": [["role": "user", "content": "hi"]]]
+                    req.httpBody = try JSONSerialization.data(withJSONObject: body)
+                }
+                req.timeoutInterval = 10
+
+                let (data, response) = try await URLSession.shared.data(for: req)
+                let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                let errMsg = (json?["error"] as? [String: Any])?["message"] as? String
+
+                await MainActor.run {
+                    if code == 200 {
+                        pingStatus = .ok
+                    } else if let msg = errMsg {
+                        // 有错误信息但能连上，说明 key/model 问题，不是网络问题
+                        pingStatus = .fail(msg.prefix(30).description)
+                    } else {
+                        pingStatus = .fail("HTTP \(code)")
+                    }
+                }
+            } catch {
+                await MainActor.run { pingStatus = .fail("无法连接") }
+            }
+        }
     }
 
     private func detectModels() {

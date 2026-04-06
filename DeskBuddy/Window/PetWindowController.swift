@@ -14,6 +14,16 @@ private class PetPanel: NSPanel {
 class PetWindowController: NSWindowController {
     private(set) var petEngine: PetEngine
     private var eventMonitor: Any?
+    private var globalMouseMonitor: Any?
+
+    // 拖拽 & 双击检测
+    private var dragStart: NSPoint = .zero
+    private var isDragging = false
+    private var lastClickTime: TimeInterval = 0
+
+    // 鼠标速度追踪
+    private var lastMousePos: NSPoint = .zero
+    private var lastMouseTime: TimeInterval = 0
 
     convenience init(emotionEngine: EmotionEngine) {
         let panel = PetPanel(
@@ -34,6 +44,7 @@ class PetWindowController: NSWindowController {
         self.init(window: panel)
         self.petEngine = petView.engine
         setupEventMonitor()
+        setupGlobalMouseMonitor()
     }
 
     override init(window: NSWindow?) {
@@ -44,23 +55,38 @@ class PetWindowController: NSWindowController {
     required init?(coder: NSCoder) { fatalError() }
 
     deinit {
-        if let monitor = eventMonitor { NSEvent.removeMonitor(monitor) }
+        if let m = eventMonitor { NSEvent.removeMonitor(m) }
+        if let m = globalMouseMonitor { NSEvent.removeMonitor(m) }
     }
 
+    // MARK: - Local event monitor (click / drag / right-click)
+
     private func setupEventMonitor() {
-        var dragStart: NSPoint = .zero
-
-        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .leftMouseUp, .rightMouseDown]) { [weak self] event in
+        eventMonitor = NSEvent.addLocalMonitorForEvents(
+            matching: [.leftMouseDown, .leftMouseUp, .rightMouseDown]
+        ) { [weak self] event in
             guard let self, let window = self.window, event.window === window else { return event }
-
             switch event.type {
             case .leftMouseDown:
-                dragStart = event.locationInWindow
+                self.dragStart = event.locationInWindow
+                self.isDragging = false
             case .leftMouseUp:
-                let dx = event.locationInWindow.x - dragStart.x
-                let dy = event.locationInWindow.y - dragStart.y
-                if sqrt(dx*dx + dy*dy) < 5 {
-                    NotificationCenter.default.post(name: .toggleChat, object: nil)
+                let dx = event.locationInWindow.x - self.dragStart.x
+                let dy = event.locationInWindow.y - self.dragStart.y
+                let dist = sqrt(dx*dx + dy*dy)
+                if dist > 8 {
+                    // 拖拽松手 → 翻滚
+                    self.petEngine.onDropped()
+                } else {
+                    // 点击：检测双击
+                    let now = Date().timeIntervalSinceReferenceDate
+                    if now - self.lastClickTime < 0.35 {
+                        self.petEngine.onDoubleClick()
+                        self.lastClickTime = 0
+                    } else {
+                        self.lastClickTime = now
+                        NotificationCenter.default.post(name: .toggleChat, object: nil)
+                    }
                 }
             case .rightMouseDown:
                 self.showContextMenu(for: event)
@@ -70,6 +96,45 @@ class PetWindowController: NSWindowController {
             return event
         }
     }
+
+    // MARK: - Global mouse monitor (proximity & speed)
+
+    private func setupGlobalMouseMonitor() {
+        globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(
+            matching: [.mouseMoved, .leftMouseDragged]
+        ) { [weak self] event in
+            self?.handleGlobalMouse(event)
+        }
+    }
+
+    private func handleGlobalMouse(_ event: NSEvent) {
+        guard let window = window else { return }
+        let mouseScreen = NSEvent.mouseLocation
+        let petCenter = NSPoint(x: window.frame.midX, y: window.frame.midY)
+
+        let dx = mouseScreen.x - petCenter.x
+        let dy = mouseScreen.y - petCenter.y
+        let distance = sqrt(dx*dx + dy*dy)
+
+        // 计算鼠标速度
+        let now = Date().timeIntervalSinceReferenceDate
+        let dt = now - lastMouseTime
+        var speed: CGFloat = 0
+        if dt > 0 && dt < 0.5 {
+            let sdx = mouseScreen.x - lastMousePos.x
+            let sdy = mouseScreen.y - lastMousePos.y
+            speed = sqrt(sdx*sdx + sdy*sdy) / CGFloat(dt)
+        }
+        lastMousePos = mouseScreen
+        lastMouseTime = now
+
+        // 只在鼠标足够近时触发互动（< 150pt）
+        if distance < 150 {
+            petEngine.onMouseNear(distance: distance, mouseX: mouseScreen.x, speed: speed)
+        }
+    }
+
+    // MARK: - Context menu
 
     private func showContextMenu(for event: NSEvent) {
         let menu = NSMenu()

@@ -3,57 +3,217 @@ import SwiftUI
 
 class AppSettings: ObservableObject {
     @AppStorage("apiKey") var apiKey = ""
-    @AppStorage("aiProvider") var aiProvider = "Claude"
+    @AppStorage("aiProvider") var aiProvider = "OpenAI Compatible"
+    @AppStorage("aiBaseURL") var aiBaseURL = "https://coding.dashscope.aliyuncs.com/v1"
+    @AppStorage("aiModel") var aiModel = "glm-5"
     @AppStorage("voiceEnabled") var voiceEnabled = false
     @AppStorage("petScale") var petScale: Double = 4.0
     @AppStorage("selectedSkin") var selectedSkin = "cat-sheet"
+    @AppStorage("petColorHex") var petColorHex = "#FFFFFF"
 }
 
 struct SettingsView: View {
     @ObservedObject var settings: AppSettings
-    let availableSkins = ["cat-sheet", "ghost-sheet", "robot-sheet"]
+    @Environment(\.dismiss) private var dismiss
+
+    // Local draft — only committed on Save
+    @State private var draftKey: String = ""
+    @State private var draftBaseURL: String = ""
+    @State private var draftModel: String = ""
+    @State private var draftProvider: String = ""
+    @State private var draftColorHex: String = ""
+    @State private var pickedColor: Color = .white
+
+    private let providers = ["OpenAI Compatible", "Claude Compatible"]
+    private let presetModelsByProvider: [String: [String]] = [
+        "OpenAI Compatible": [
+            "qwen3.5-plus", "qwen3-max-2026-01-23", "qwen3-coder-next", "qwen3-coder-plus",
+            "glm-5", "glm-4.7",
+            "kimi-k2.5",
+            "MiniMax-M2.5",
+            "deepseek-chat",
+            "gpt-4o-mini", "gpt-4o",
+        ],
+        "Claude Compatible": [
+            "claude-opus-4-6", "claude-sonnet-4-6", "claude-haiku-4-5-20251001", "claude-3-5-sonnet-20241022",
+        ],
+    ]
+    private var presetModels: [String] { presetModelsByProvider[draftProvider] ?? [] }
+    private let presetColors: [(String, Color)] = [
+        ("#FFFFFF", .white),
+        ("#FFD6E0", Color(red: 1, green: 0.84, blue: 0.88)),
+        ("#D6F0FF", Color(red: 0.84, green: 0.94, blue: 1)),
+        ("#D6FFD6", Color(red: 0.84, green: 1, blue: 0.84)),
+        ("#FFF3D6", Color(red: 1, green: 0.95, blue: 0.84)),
+        ("#E8D6FF", Color(red: 0.91, green: 0.84, blue: 1)),
+    ]
 
     var body: some View {
-        Form {
-            Section("AI 设置") {
-                Picker("服务商", selection: $settings.aiProvider) {
-                    Text("Claude").tag("Claude")
-                    Text("OpenAI").tag("OpenAI")
-                }
-                .pickerStyle(.segmented)
+        VStack(spacing: 0) {
+            Form {
+                Section("AI 设置") {
+                    Picker("服务商", selection: $draftProvider) {
+                        ForEach(providers, id: \.self) { Text($0).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    .onChange(of: draftProvider) { p in
+                        // 切换服务商时自动填入默认 baseURL
+                        if p == "Claude Compatible" {
+                            if draftBaseURL.isEmpty || draftBaseURL == "https://coding.dashscope.aliyuncs.com/v1" {
+                                draftBaseURL = "https://coding.dashscope.aliyuncs.com/apps/anthropic"
+                            }
+                        } else {
+                            if draftBaseURL.isEmpty || draftBaseURL == "https://coding.dashscope.aliyuncs.com/apps/anthropic" {
+                                draftBaseURL = "https://coding.dashscope.aliyuncs.com/v1"
+                            }
+                        }
+                        // 切换时重置 model 为该 provider 的第一个预设
+                        draftModel = presetModelsByProvider[p]?.first ?? ""
+                    }
 
-                SecureField("API Key", text: $settings.apiKey)
-                    .textFieldStyle(.roundedBorder)
-            }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Base URL").font(.caption).foregroundStyle(.secondary)
+                        TextField("https://...", text: $draftBaseURL)
+                            .textFieldStyle(.roundedBorder)
+                    }
 
-            Section("语音") {
-                Toggle("启用语音", isOn: $settings.voiceEnabled)
-            }
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Model").font(.caption).foregroundStyle(.secondary)
+                        // 预设模型快选
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 6) {
+                                ForEach(presetModels, id: \.self) { m in
+                                    Text(m)
+                                        .font(.system(size: 11))
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(draftModel == m ? Color.accentColor : Color.secondary.opacity(0.15))
+                                        .foregroundColor(draftModel == m ? .white : .primary)
+                                        .cornerRadius(6)
+                                        .onTapGesture { draftModel = m }
+                                }
+                            }
+                        }
+                        // 自定义输入
+                        TextField("自定义 model 名称", text: $draftModel)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.system(size: 13))
+                    }
 
-            Section("外观") {
-                Picker("皮肤", selection: $settings.selectedSkin) {
-                    ForEach(availableSkins, id: \.self) { skin in
-                        Text(skin.replacingOccurrences(of: "-sheet", with: "").capitalized)
-                            .tag(skin)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("API Key").font(.caption).foregroundStyle(.secondary)
+                        SecureField("输入 API Key", text: $draftKey)
+                            .textFieldStyle(.roundedBorder)
                     }
                 }
 
-                HStack {
-                    Text("大小")
-                    Slider(value: $settings.petScale, in: 2...8, step: 1)
-                    Text("\(Int(settings.petScale))x")
-                        .frame(width: 30)
-                }
-            }
+                Section("外观") {
+                    Picker("皮肤", selection: $settings.selectedSkin) {
+                        Text("Cat").tag("cat-sheet")
+                        Text("Ghost").tag("ghost-sheet")
+                        Text("Robot").tag("robot-sheet")
+                    }
+                    .pickerStyle(.segmented)
 
-            Section {
-                Button("清除对话记录", role: .destructive) {
-                    ConversationStore.shared.clearAll()
+                    HStack {
+                        Text("大小")
+                        Slider(value: $settings.petScale, in: 2...8, step: 1)
+                        Text("\(Int(settings.petScale))x")
+                            .frame(width: 30)
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("颜色叠加")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        HStack(spacing: 10) {
+                            ForEach(presetColors, id: \.0) { hex, color in
+                                Circle()
+                                    .fill(color)
+                                    .frame(width: 24, height: 24)
+                                    .overlay(
+                                        Circle().stroke(draftColorHex == hex ? Color.accentColor : Color.clear, lineWidth: 2)
+                                    )
+                                    .onTapGesture {
+                                        draftColorHex = hex
+                                        pickedColor = color
+                                    }
+                            }
+                            ColorPicker("", selection: $pickedColor, supportsOpacity: false)
+                                .labelsHidden()
+                                .onChange(of: pickedColor) { c in
+                                    draftColorHex = c.toHex() ?? draftColorHex
+                                }
+                        }
+                    }
+                }
+
+                Section("语音") {
+                    Toggle("启用语音", isOn: $settings.voiceEnabled)
+                }
+
+                Section {
+                    Button("清除对话记录", role: .destructive) {
+                        ConversationStore.shared.clearAll()
+                    }
                 }
             }
+            .formStyle(.grouped)
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("取消") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+                Button("保存") { save() }
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
+            }
+            .padding()
         }
-        .formStyle(.grouped)
-        .frame(width: 360)
-        .padding()
+        .frame(width: 380)
+        .onAppear { loadDraft() }
+    }
+
+    private func loadDraft() {
+        draftKey = settings.apiKey
+        draftBaseURL = settings.aiBaseURL
+        draftModel = settings.aiModel
+        draftProvider = settings.aiProvider
+        draftColorHex = settings.petColorHex
+        pickedColor = Color(hex: draftColorHex) ?? .white
+    }
+
+    private func save() {
+        settings.apiKey = draftKey
+        settings.aiBaseURL = draftBaseURL
+        settings.aiModel = draftModel
+        settings.aiProvider = draftProvider
+        settings.petColorHex = draftColorHex
+        dismiss()
+    }
+}
+
+// MARK: - Color helpers
+
+extension Color {
+    init?(hex: String) {
+        var h = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        if h.hasPrefix("#") { h = String(h.dropFirst()) }
+        guard h.count == 6, let val = UInt64(h, radix: 16) else { return nil }
+        self.init(
+            red: Double((val >> 16) & 0xFF) / 255,
+            green: Double((val >> 8) & 0xFF) / 255,
+            blue: Double(val & 0xFF) / 255
+        )
+    }
+
+    func toHex() -> String? {
+        guard let c = NSColor(self).usingColorSpace(.sRGB) else { return nil }
+        return String(format: "#%02X%02X%02X",
+            Int(c.redComponent * 255),
+            Int(c.greenComponent * 255),
+            Int(c.blueComponent * 255))
     }
 }

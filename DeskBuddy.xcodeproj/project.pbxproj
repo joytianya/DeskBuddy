@@ -9,11 +9,27 @@
 /* Begin PBXBuildFile section */
 		032E3FB62E60BFFAAED186A8 /* PetEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D75799F0ECD08111989F04 /* PetEngineTests.swift */; };
 		0667EC37B6C23A63B148F886 /* PetWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B66CC60C145B118B07BE56 /* PetWindowView.swift */; };
+		1B9158C753D71959F2CAAB83 /* ConversationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7418E066B4A7449B1CEEC3FB /* ConversationStore.swift */; };
+		2011B284CFC52C8F79C78F21 /* ChatBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5A1035D9C0ADACE5CD65E7 /* ChatBubbleView.swift */; };
+		266A150FF7BC71FC27AF774B /* PetEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28649436F3AD9F27B7E4625 /* PetEngine.swift */; };
+		2FC9CE0E2933B186B3A05E6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0612DE7D7D1A267C8CFEDEF0 /* Assets.xcassets */; };
 		319469BFFB82DCDAC6EBC326 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A4257D5BA1B8BA7D963679 /* AppDelegate.swift */; };
+		49158FE8D6B30E4FACA09107 /* SystemSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C56C40E144AC480A160E5B3 /* SystemSignal.swift */; };
+		539ABACDB538FDB20935F032 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12427FDFC408A249D1C3E2EA /* SettingsView.swift */; };
 		69D786C472966C6D34FD41C9 /* DeskBuddyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C963CE34AE87D3DF3B28B83F /* DeskBuddyApp.swift */; };
+		6D0776F6720DD920A1013748 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D0974C218E6F658725092DF /* Speech.framework */; };
+		71059FEE585F1B7AF553C295 /* AIBridgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D277DCFE77AE705830275992 /* AIBridgeTests.swift */; };
+		76E766675A48D9384E5BB0D7 /* VoiceOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E322CB9C659DD5445E761014 /* VoiceOutput.swift */; };
 		77B9C80022179EE9F0237F8A /* PetWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561032E33A6E9F6CFE815A5 /* PetWindowController.swift */; };
+		7CE35D17693E67444E030A2B /* TimeSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A73B32D5645B30BE0C63A9 /* TimeSignal.swift */; };
+		93703FF33ED493FD879A9AF2 /* EmotionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A3C264294B30D5B5C23547 /* EmotionEngineTests.swift */; };
+		9751718EBF2D57A244815540 /* VoiceInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF5711F6EA3732D5CFCA30 /* VoiceInput.swift */; };
+		A9EED6920565B0B2494B0E2F /* AIBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA24405C12B2AD51D95F5D0 /* AIBridge.swift */; };
 		BF398E620DF51FBBA6E2A653 /* SpriteLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6155145D5B22665A0EA43954 /* SpriteLoader.swift */; };
+		BFBAC3A3BD1FA647BB02B79F /* IntimacySignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADF99A2DCF90A27F5449015 /* IntimacySignal.swift */; };
 		EEF130A7739DFC059E0925E8 /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103B12FE020F55C54122C2E0 /* PetState.swift */; };
+		EFBC2E834C916892DB9D83D2 /* SystemPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A773FEDA97DCFB2FB3E7CD /* SystemPromptBuilder.swift */; };
+		F3893C0612F2D9EF691872A4 /* EmotionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E39481C042B33F63D09394 /* EmotionEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,23 +43,52 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0612DE7D7D1A267C8CFEDEF0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0C56C40E144AC480A160E5B3 /* SystemSignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSignal.swift; sourceTree = "<group>"; };
+		0D0974C218E6F658725092DF /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Speech.framework; sourceTree = "<group>"; };
+		0E5A1035D9C0ADACE5CD65E7 /* ChatBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubbleView.swift; sourceTree = "<group>"; };
 		103B12FE020F55C54122C2E0 /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
+		12427FDFC408A249D1C3E2EA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		20A4257D5BA1B8BA7D963679 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		45A73B32D5645B30BE0C63A9 /* TimeSignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSignal.swift; sourceTree = "<group>"; };
+		53A3C264294B30D5B5C23547 /* EmotionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionEngineTests.swift; sourceTree = "<group>"; };
+		58A773FEDA97DCFB2FB3E7CD /* SystemPromptBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemPromptBuilder.swift; sourceTree = "<group>"; };
 		60B66CC60C145B118B07BE56 /* PetWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetWindowView.swift; sourceTree = "<group>"; };
 		6155145D5B22665A0EA43954 /* SpriteLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteLoader.swift; sourceTree = "<group>"; };
 		616416EE1BE44DBAA5F623EB /* DeskBuddyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeskBuddyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7418E066B4A7449B1CEEC3FB /* ConversationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStore.swift; sourceTree = "<group>"; };
 		76B97022FE5CC97D03D458AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7834962F9A1B9636565FAE4F /* DeskBuddy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DeskBuddy.entitlements; sourceTree = "<group>"; };
+		86E39481C042B33F63D09394 /* EmotionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionEngine.swift; sourceTree = "<group>"; };
+		9CA24405C12B2AD51D95F5D0 /* AIBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIBridge.swift; sourceTree = "<group>"; };
 		C561032E33A6E9F6CFE815A5 /* PetWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetWindowController.swift; sourceTree = "<group>"; };
 		C963CE34AE87D3DF3B28B83F /* DeskBuddyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeskBuddyApp.swift; sourceTree = "<group>"; };
+		D277DCFE77AE705830275992 /* AIBridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIBridgeTests.swift; sourceTree = "<group>"; };
 		D41F3D6A4CBC06B71C9C2B4B /* DeskBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeskBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8DBA3591A676CF1D1DC21E1 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		E28649436F3AD9F27B7E4625 /* PetEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetEngine.swift; sourceTree = "<group>"; };
+		E322CB9C659DD5445E761014 /* VoiceOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceOutput.swift; sourceTree = "<group>"; };
+		E9CF5711F6EA3732D5CFCA30 /* VoiceInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInput.swift; sourceTree = "<group>"; };
 		F1D75799F0ECD08111989F04 /* PetEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetEngineTests.swift; sourceTree = "<group>"; };
+		FADF99A2DCF90A27F5449015 /* IntimacySignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntimacySignal.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		770F6593BBC6340F42CED683 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D0776F6720DD920A1013748 /* Speech.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		14A6DDF080374C623C19AF44 /* Pet */ = {
 			isa = PBXGroup;
 			children = (
+				E28649436F3AD9F27B7E4625 /* PetEngine.swift */,
 				103B12FE020F55C54122C2E0 /* PetState.swift */,
 				6155145D5B22665A0EA43954 /* SpriteLoader.swift */,
 			);
@@ -53,10 +98,16 @@
 		1ACAEE2A8174F7E4F62366F3 /* DeskBuddy */ = {
 			isa = PBXGroup;
 			children = (
+				0612DE7D7D1A267C8CFEDEF0 /* Assets.xcassets */,
+				7834962F9A1B9636565FAE4F /* DeskBuddy.entitlements */,
 				76B97022FE5CC97D03D458AC /* Info.plist */,
+				DA5F70A82EA719798CA73B9A /* AI */,
 				D36C441046FBE7603705BF0A /* App */,
 				940E07D2D70C98CB24C1CCA6 /* Assets */,
+				F87FAF644C88402D3F82A859 /* Emotion */,
 				14A6DDF080374C623C19AF44 /* Pet */,
+				52B8866740D135B2F1391D0B /* UI */,
+				CD321A8BC39773332AA37DF6 /* Voice */,
 				9FBA7DC1336F2A14AA049238 /* Window */,
 			);
 			path = DeskBuddy;
@@ -65,9 +116,20 @@
 		208193968549966CCA9CE048 /* DeskBuddyTests */ = {
 			isa = PBXGroup;
 			children = (
+				D277DCFE77AE705830275992 /* AIBridgeTests.swift */,
+				53A3C264294B30D5B5C23547 /* EmotionEngineTests.swift */,
 				F1D75799F0ECD08111989F04 /* PetEngineTests.swift */,
 			);
 			path = DeskBuddyTests;
+			sourceTree = "<group>";
+		};
+		52B8866740D135B2F1391D0B /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				0E5A1035D9C0ADACE5CD65E7 /* ChatBubbleView.swift */,
+				12427FDFC408A249D1C3E2EA /* SettingsView.swift */,
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 		79AD0D362AE919452E946407 /* Products */ = {
@@ -100,6 +162,7 @@
 			children = (
 				1ACAEE2A8174F7E4F62366F3 /* DeskBuddy */,
 				208193968549966CCA9CE048 /* DeskBuddyTests */,
+				C88B99FAE765B819059D2977 /* Frameworks */,
 				79AD0D362AE919452E946407 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,6 +176,23 @@
 			path = Window;
 			sourceTree = "<group>";
 		};
+		C88B99FAE765B819059D2977 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0D0974C218E6F658725092DF /* Speech.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CD321A8BC39773332AA37DF6 /* Voice */ = {
+			isa = PBXGroup;
+			children = (
+				E9CF5711F6EA3732D5CFCA30 /* VoiceInput.swift */,
+				E322CB9C659DD5445E761014 /* VoiceOutput.swift */,
+			);
+			path = Voice;
+			sourceTree = "<group>";
+		};
 		D36C441046FBE7603705BF0A /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -120,6 +200,27 @@
 				C963CE34AE87D3DF3B28B83F /* DeskBuddyApp.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		DA5F70A82EA719798CA73B9A /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				9CA24405C12B2AD51D95F5D0 /* AIBridge.swift */,
+				7418E066B4A7449B1CEEC3FB /* ConversationStore.swift */,
+				58A773FEDA97DCFB2FB3E7CD /* SystemPromptBuilder.swift */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
+		F87FAF644C88402D3F82A859 /* Emotion */ = {
+			isa = PBXGroup;
+			children = (
+				86E39481C042B33F63D09394 /* EmotionEngine.swift */,
+				FADF99A2DCF90A27F5449015 /* IntimacySignal.swift */,
+				0C56C40E144AC480A160E5B3 /* SystemSignal.swift */,
+				45A73B32D5645B30BE0C63A9 /* TimeSignal.swift */,
+			);
+			path = Emotion;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -130,6 +231,8 @@
 			buildConfigurationList = D70FB20C314C31EC365CD7A8 /* Build configuration list for PBXNativeTarget "DeskBuddy" */;
 			buildPhases = (
 				39C40599D4216551681A60A9 /* Sources */,
+				051EF5B6D9465C9028538075 /* Resources */,
+				770F6593BBC6340F42CED683 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -194,11 +297,24 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		051EF5B6D9465C9028538075 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FC9CE0E2933B186B3A05E6F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1A357D95EAED38C545CD037E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71059FEE585F1B7AF553C295 /* AIBridgeTests.swift in Sources */,
+				93703FF33ED493FD879A9AF2 /* EmotionEngineTests.swift in Sources */,
 				032E3FB62E60BFFAAED186A8 /* PetEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,12 +323,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9EED6920565B0B2494B0E2F /* AIBridge.swift in Sources */,
 				319469BFFB82DCDAC6EBC326 /* AppDelegate.swift in Sources */,
+				2011B284CFC52C8F79C78F21 /* ChatBubbleView.swift in Sources */,
+				1B9158C753D71959F2CAAB83 /* ConversationStore.swift in Sources */,
 				69D786C472966C6D34FD41C9 /* DeskBuddyApp.swift in Sources */,
+				F3893C0612F2D9EF691872A4 /* EmotionEngine.swift in Sources */,
+				BFBAC3A3BD1FA647BB02B79F /* IntimacySignal.swift in Sources */,
+				266A150FF7BC71FC27AF774B /* PetEngine.swift in Sources */,
 				EEF130A7739DFC059E0925E8 /* PetState.swift in Sources */,
 				77B9C80022179EE9F0237F8A /* PetWindowController.swift in Sources */,
 				0667EC37B6C23A63B148F886 /* PetWindowView.swift in Sources */,
+				539ABACDB538FDB20935F032 /* SettingsView.swift in Sources */,
 				BF398E620DF51FBBA6E2A653 /* SpriteLoader.swift in Sources */,
+				EFBC2E834C916892DB9D83D2 /* SystemPromptBuilder.swift in Sources */,
+				49158FE8D6B30E4FACA09107 /* SystemSignal.swift in Sources */,
+				7CE35D17693E67444E030A2B /* TimeSignal.swift in Sources */,
+				9751718EBF2D57A244815540 /* VoiceInput.swift in Sources */,
+				76E766675A48D9384E5BB0D7 /* VoiceOutput.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,8 +359,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DeskBuddy/DeskBuddy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\".\"",
+				);
 				INFOPLIST_FILE = DeskBuddy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -304,6 +437,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -319,8 +453,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DeskBuddy/DeskBuddy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\".\"",
+				);
 				INFOPLIST_FILE = DeskBuddy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -399,6 +538,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

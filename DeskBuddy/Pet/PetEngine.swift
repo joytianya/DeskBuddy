@@ -66,9 +66,12 @@ class PetEngine: SKScene {
         // 根据鼠标在宠物左/右翻转朝向
         let petScreenX = view?.window?.frame.midX ?? 0
         let facingRight = mouseX > petScreenX
-        let targetScaleX = facingRight ? abs(petNode.xScale) : -abs(petNode.xScale)
+        let absScale = abs(petNode.xScale)
+        guard absScale > 0 else { return }
+        let targetScaleX = facingRight ? absScale : -absScale
         if petNode.xScale != targetScaleX {
-            petNode.run(SKAction.scaleX(to: targetScaleX, duration: 0.1), withKey: "flip")
+            petNode.removeAction(forKey: "flip")
+            petNode.xScale = targetScaleX
         }
 
         if distance < 80 {

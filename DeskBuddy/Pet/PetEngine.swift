@@ -64,7 +64,7 @@ class PetEngine: SKScene {
         lastMouseSpeed = speed
 
         // 根据鼠标在宠物左/右翻转朝向
-        let petScreenX = window?.frame.midX ?? 0
+        let petScreenX = view?.window?.frame.midX ?? 0
         let facingRight = mouseX > petScreenX
         let targetScaleX = facingRight ? abs(petNode.xScale) : -abs(petNode.xScale)
         if petNode.xScale != targetScaleX {

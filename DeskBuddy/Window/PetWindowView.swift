@@ -36,6 +36,7 @@ struct PetWindowView: View {
         }
         .frame(width: 400, height: 400)
         .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
+            NSApp.activate(ignoringOtherApps: true)
             showSettings = true
         }
     }

@@ -73,7 +73,7 @@ struct SettingsView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Base URL").font(.caption).foregroundStyle(.secondary)
-                        TextField("https://...", text: $draftBaseURL)
+                        TextField("", text: $draftBaseURL)
                             .textFieldStyle(.roundedBorder)
                     }
 

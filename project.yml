@@ -1,0 +1,49 @@
+name: DeskBuddy
+options:
+  bundleIdPrefix: com.deskbuddy
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+
+targets:
+  DeskBuddy:
+    type: application
+    platform: macOS
+    sources:
+      - path: DeskBuddy
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.deskbuddy.app
+        INFOPLIST_FILE: DeskBuddy/Info.plist
+        CODE_SIGN_STYLE: Automatic
+    info:
+      path: DeskBuddy/Info.plist
+      properties:
+        CFBundleName: DeskBuddy
+        CFBundleDisplayName: DeskBuddy
+        CFBundleIdentifier: com.deskbuddy.app
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "0.1.0"
+        NSPrincipalClass: NSApplication
+        NSHighResolutionCapable: true
+        LSUIElement: true
+        NSMicrophoneUsageDescription: "DeskBuddy needs microphone access for voice input"
+        NSSpeechRecognitionUsageDescription: "DeskBuddy needs speech recognition for voice commands"
+
+  DeskBuddyTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - DeskBuddyTests
+    dependencies:
+      - target: DeskBuddy
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.deskbuddy.tests

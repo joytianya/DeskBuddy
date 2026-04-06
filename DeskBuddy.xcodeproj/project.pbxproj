@@ -1,0 +1,446 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		032E3FB62E60BFFAAED186A8 /* PetEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D75799F0ECD08111989F04 /* PetEngineTests.swift */; };
+		0667EC37B6C23A63B148F886 /* PetWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B66CC60C145B118B07BE56 /* PetWindowView.swift */; };
+		319469BFFB82DCDAC6EBC326 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A4257D5BA1B8BA7D963679 /* AppDelegate.swift */; };
+		69D786C472966C6D34FD41C9 /* DeskBuddyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C963CE34AE87D3DF3B28B83F /* DeskBuddyApp.swift */; };
+		77B9C80022179EE9F0237F8A /* PetWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561032E33A6E9F6CFE815A5 /* PetWindowController.swift */; };
+		BF398E620DF51FBBA6E2A653 /* SpriteLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6155145D5B22665A0EA43954 /* SpriteLoader.swift */; };
+		EEF130A7739DFC059E0925E8 /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103B12FE020F55C54122C2E0 /* PetState.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		30A8F57BB5F549C6A8C2404D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B173B05FDF76084A7B1BD514 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 98EB205A233059F08A926EE8;
+			remoteInfo = DeskBuddy;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		103B12FE020F55C54122C2E0 /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
+		20A4257D5BA1B8BA7D963679 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		60B66CC60C145B118B07BE56 /* PetWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetWindowView.swift; sourceTree = "<group>"; };
+		6155145D5B22665A0EA43954 /* SpriteLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteLoader.swift; sourceTree = "<group>"; };
+		616416EE1BE44DBAA5F623EB /* DeskBuddyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeskBuddyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		76B97022FE5CC97D03D458AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C561032E33A6E9F6CFE815A5 /* PetWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetWindowController.swift; sourceTree = "<group>"; };
+		C963CE34AE87D3DF3B28B83F /* DeskBuddyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeskBuddyApp.swift; sourceTree = "<group>"; };
+		D41F3D6A4CBC06B71C9C2B4B /* DeskBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeskBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8DBA3591A676CF1D1DC21E1 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		F1D75799F0ECD08111989F04 /* PetEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetEngineTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		14A6DDF080374C623C19AF44 /* Pet */ = {
+			isa = PBXGroup;
+			children = (
+				103B12FE020F55C54122C2E0 /* PetState.swift */,
+				6155145D5B22665A0EA43954 /* SpriteLoader.swift */,
+			);
+			path = Pet;
+			sourceTree = "<group>";
+		};
+		1ACAEE2A8174F7E4F62366F3 /* DeskBuddy */ = {
+			isa = PBXGroup;
+			children = (
+				76B97022FE5CC97D03D458AC /* Info.plist */,
+				D36C441046FBE7603705BF0A /* App */,
+				940E07D2D70C98CB24C1CCA6 /* Assets */,
+				14A6DDF080374C623C19AF44 /* Pet */,
+				9FBA7DC1336F2A14AA049238 /* Window */,
+			);
+			path = DeskBuddy;
+			sourceTree = "<group>";
+		};
+		208193968549966CCA9CE048 /* DeskBuddyTests */ = {
+			isa = PBXGroup;
+			children = (
+				F1D75799F0ECD08111989F04 /* PetEngineTests.swift */,
+			);
+			path = DeskBuddyTests;
+			sourceTree = "<group>";
+		};
+		79AD0D362AE919452E946407 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D41F3D6A4CBC06B71C9C2B4B /* DeskBuddy.app */,
+				616416EE1BE44DBAA5F623EB /* DeskBuddyTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		81AD476B577A1C4B8504BF7D /* Sprites */ = {
+			isa = PBXGroup;
+			children = (
+				D8DBA3591A676CF1D1DC21E1 /* .gitkeep */,
+			);
+			path = Sprites;
+			sourceTree = "<group>";
+		};
+		940E07D2D70C98CB24C1CCA6 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				81AD476B577A1C4B8504BF7D /* Sprites */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		99503CC645EFD3B9E853E931 = {
+			isa = PBXGroup;
+			children = (
+				1ACAEE2A8174F7E4F62366F3 /* DeskBuddy */,
+				208193968549966CCA9CE048 /* DeskBuddyTests */,
+				79AD0D362AE919452E946407 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9FBA7DC1336F2A14AA049238 /* Window */ = {
+			isa = PBXGroup;
+			children = (
+				C561032E33A6E9F6CFE815A5 /* PetWindowController.swift */,
+				60B66CC60C145B118B07BE56 /* PetWindowView.swift */,
+			);
+			path = Window;
+			sourceTree = "<group>";
+		};
+		D36C441046FBE7603705BF0A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				20A4257D5BA1B8BA7D963679 /* AppDelegate.swift */,
+				C963CE34AE87D3DF3B28B83F /* DeskBuddyApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		98EB205A233059F08A926EE8 /* DeskBuddy */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D70FB20C314C31EC365CD7A8 /* Build configuration list for PBXNativeTarget "DeskBuddy" */;
+			buildPhases = (
+				39C40599D4216551681A60A9 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeskBuddy;
+			packageProductDependencies = (
+			);
+			productName = DeskBuddy;
+			productReference = D41F3D6A4CBC06B71C9C2B4B /* DeskBuddy.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B1B3EC00A2AD419B465F18CC /* DeskBuddyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F892D8E2C79697BD72EE4DFE /* Build configuration list for PBXNativeTarget "DeskBuddyTests" */;
+			buildPhases = (
+				1A357D95EAED38C545CD037E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				56D6C5DBBE247C8ED82D29E7 /* PBXTargetDependency */,
+			);
+			name = DeskBuddyTests;
+			packageProductDependencies = (
+			);
+			productName = DeskBuddyTests;
+			productReference = 616416EE1BE44DBAA5F623EB /* DeskBuddyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B173B05FDF76084A7B1BD514 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					98EB205A233059F08A926EE8 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = AE9FD2EADFEA06A671ACDE1E /* Build configuration list for PBXProject "DeskBuddy" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 99503CC645EFD3B9E853E931;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 79AD0D362AE919452E946407 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				98EB205A233059F08A926EE8 /* DeskBuddy */,
+				B1B3EC00A2AD419B465F18CC /* DeskBuddyTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1A357D95EAED38C545CD037E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				032E3FB62E60BFFAAED186A8 /* PetEngineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39C40599D4216551681A60A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				319469BFFB82DCDAC6EBC326 /* AppDelegate.swift in Sources */,
+				69D786C472966C6D34FD41C9 /* DeskBuddyApp.swift in Sources */,
+				EEF130A7739DFC059E0925E8 /* PetState.swift in Sources */,
+				77B9C80022179EE9F0237F8A /* PetWindowController.swift in Sources */,
+				0667EC37B6C23A63B148F886 /* PetWindowView.swift in Sources */,
+				BF398E620DF51FBBA6E2A653 /* SpriteLoader.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		56D6C5DBBE247C8ED82D29E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 98EB205A233059F08A926EE8 /* DeskBuddy */;
+			targetProxy = 30A8F57BB5F549C6A8C2404D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0BE7FBC1B2EC8A17B528706F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = DeskBuddy/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.deskbuddy.app;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3160AFB7EAC1233FCB894502 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		3DF912F9AEF4AA9B49F44CA9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.deskbuddy.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeskBuddy.app/Contents/MacOS/DeskBuddy";
+			};
+			name = Release;
+		};
+		A48E5E8FB8CD1A8A98F3522B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = DeskBuddy/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.deskbuddy.app;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C551D5E87EB32B98690BA897 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		F4EC959CFED67CCF1BB40DF6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.deskbuddy.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeskBuddy.app/Contents/MacOS/DeskBuddy";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AE9FD2EADFEA06A671ACDE1E /* Build configuration list for PBXProject "DeskBuddy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C551D5E87EB32B98690BA897 /* Debug */,
+				3160AFB7EAC1233FCB894502 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D70FB20C314C31EC365CD7A8 /* Build configuration list for PBXNativeTarget "DeskBuddy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A48E5E8FB8CD1A8A98F3522B /* Debug */,
+				0BE7FBC1B2EC8A17B528706F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F892D8E2C79697BD72EE4DFE /* Build configuration list for PBXNativeTarget "DeskBuddyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4EC959CFED67CCF1BB40DF6 /* Debug */,
+				3DF912F9AEF4AA9B49F44CA9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B173B05FDF76084A7B1BD514 /* Project object */;
+}

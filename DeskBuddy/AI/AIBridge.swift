@@ -1,5 +1,6 @@
 // DeskBuddy/AI/AIBridge.swift
 import Foundation
+import SwiftUI
 
 enum AIProvider: String, CaseIterable {
     case claude = "Claude"
@@ -14,8 +15,9 @@ class AIBridge: ObservableObject {
     @Published var isLoading = false
 
     private let store = ConversationStore.shared
-    var provider: AIProvider = .claude
-    var apiKey: String = ""
+    @AppStorage("apiKey") var apiKey = ""
+    @AppStorage("aiProvider") private var providerString = "Claude"
+    var provider: AIProvider { AIProvider(rawValue: providerString) ?? .claude }
 
     private var session: URLSession = {
         let config = URLSessionConfiguration.default

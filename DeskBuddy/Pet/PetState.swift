@@ -20,9 +20,9 @@ enum PetState: Int, CaseIterable {
     var rowIndex: Int {
         switch self {
         case .idle:    return 0  // Idle A
-        case .bored:   return 1  // Idle B
-        case .happy:   return 2  // Clean A
-        case .clingy:  return 3  // Clean B
+        case .happy:   return 4  // Walk A（走路摇摆，看起来开心）
+        case .clingy:  return 5  // Walk B（走向主人，粘人）
+        case .bored:   return 7  // Paw（抓挠动作，无聊）
         case .excited: return 8  // Jump
         case .sleepy:  return 6  // Sleep
         case .anxious: return 9  // Scared
@@ -32,9 +32,9 @@ enum PetState: Int, CaseIterable {
     var frameCount: Int {
         switch self {
         case .idle:    return 4  // Row 0: 4 frames
-        case .bored:   return 4  // Row 1: 4 frames
-        case .happy:   return 4  // Row 2: 4 frames
-        case .clingy:  return 4  // Row 3: 4 frames
+        case .happy:   return 4  // Row 4: 4 frames (Walk A)
+        case .clingy:  return 4  // Row 5: 4 frames (Walk B)
+        case .bored:   return 4  // Row 7: 4 frames (Paw)
         case .excited: return 7  // Row 8: 7 frames (jump)
         case .sleepy:  return 4  // Row 6: 4 frames
         case .anxious: return 8  // Row 9: 8 frames (scared)

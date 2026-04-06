@@ -8,10 +8,7 @@ class PetEngine: SKScene {
     private var skinName: String = "cat-sheet"
     private var cancellables = Set<AnyCancellable>()
 
-    // 互动状态
-    private var isInteracting = false
-    private var interactionTimer: Timer?
-    private var lastMouseSpeed: CGFloat = 0
+    // 互动状态（用于 bindStateChanges 检查）
 
     let stateSubject = PassthroughSubject<PetState, Never>()
 
@@ -35,7 +32,8 @@ class PetEngine: SKScene {
         stateSubject
             .removeDuplicates()
             .sink { [weak self] newState in
-                guard self?.isInteracting == false else { return }
+                // 互动动画播放时不打断，结束后会恢复到 currentState
+                guard self?.petNode?.action(forKey: "interaction") == nil else { return }
                 self?.playAnimation(state: newState)
             }
             .store(in: &cancellables)
@@ -44,16 +42,35 @@ class PetEngine: SKScene {
     func playAnimation(state: PetState) {
         currentState = state
         guard let petNode = petNode else { return }
+
+        let rhythm = AnimationRhythm.forState(state)
         let frames = SpriteLoader.frames(sheetName: skinName, state: state)
         let textures = frames.map { t -> SKTexture in
             t.filteringMode = .nearest
             return t
         }
-        let action = SKAction.repeatForever(
-            SKAction.animate(with: textures, timePerFrame: 0.15)
-        )
+
         petNode.removeAction(forKey: "animation")
-        petNode.run(action, withKey: "animation")
+
+        if let maxCycles = rhythm.maxCycles {
+            // 有限循环（如 excited 跳 2 次后停顿）
+            let cycleAction = SKAction.animate(with: textures, timePerFrame: rhythm.frameInterval)
+            let sequence = SKAction.sequence([
+                SKAction.repeat(cycleAction, count: maxCycles),
+                SKAction.wait(forDuration: rhythm.pauseDuration)
+            ])
+            petNode.run(SKAction.repeatForever(sequence), withKey: "animation")
+        } else {
+            // 播放 → 停顿循环
+            let playAction = SKAction.animate(with: textures, timePerFrame: rhythm.frameInterval)
+            // 计算播放期间内完整动画循环次数
+            let cycleCount = max(1, Int(rhythm.playDuration / (rhythm.frameInterval * Double(textures.count))))
+            let sequence = SKAction.sequence([
+                SKAction.repeat(playAction, count: cycleCount),
+                SKAction.wait(forDuration: rhythm.pauseDuration)
+            ])
+            petNode.run(SKAction.repeatForever(sequence), withKey: "animation")
+        }
     }
 
     // MARK: - 鼠标互动
@@ -61,7 +78,6 @@ class PetEngine: SKScene {
     /// 鼠标靠近时调用，distance 为鼠标到宠物窗口中心的距离（屏幕坐标 pt）
     func onMouseNear(distance: CGFloat, mouseX: CGFloat, speed: CGFloat) {
         guard let petNode = petNode else { return }
-        lastMouseSpeed = speed
 
         // 根据鼠标在宠物左/右翻转朝向
         let petScreenX = view?.window?.frame.midX ?? 0
@@ -88,24 +104,22 @@ class PetEngine: SKScene {
     /// 拖拽宠物松手后翻滚
     func onDropped() {
         guard let petNode = petNode else { return }
-        isInteracting = true
-        interactionTimer?.invalidate()
 
         let roll = SKAction.sequence([
             SKAction.rotate(byAngle: .pi * 2, duration: 0.4),
-            SKAction.rotate(toAngle: 0, duration: 0.1)
+            SKAction.rotate(toAngle: 0, duration: 0.1),
+            SKAction.run { [weak self] in
+                self?.playAnimation(state: self?.currentState ?? .idle)
+            }
         ])
-        petNode.run(roll) { [weak self] in
-            self?.isInteracting = false
-            self?.playAnimation(state: self?.currentState ?? .idle)
-        }
+        petNode.removeAction(forKey: "animation")
+        petNode.removeAction(forKey: "interaction")
+        petNode.run(roll, withKey: "interaction")
     }
 
     /// 双击宠物 → 开心跳跃
     func onDoubleClick() {
         guard let petNode = petNode else { return }
-        isInteracting = true
-        interactionTimer?.invalidate()
 
         let jump = SKAction.sequence([
             SKAction.moveBy(x: 0, y: 12, duration: 0.15),
@@ -118,13 +132,29 @@ class PetEngine: SKScene {
     }
 
     private func triggerInteraction(state: PetState, duration: TimeInterval) {
-        isInteracting = true
-        interactionTimer?.invalidate()
-        playAnimation(state: state)
-        interactionTimer = Timer.scheduledTimer(withTimeInterval: duration, repeats: false) { [weak self] _ in
-            self?.isInteracting = false
-            self?.playAnimation(state: self?.currentState ?? .idle)
+        guard let petNode = petNode else { return }
+
+        let rhythm = AnimationRhythm.forState(state)
+        let frames = SpriteLoader.frames(sheetName: skinName, state: state)
+        let textures = frames.map { t -> SKTexture in
+            t.filteringMode = .nearest
+            return t
         }
+
+        // 互动动画播放指定次数后恢复
+        let playAction = SKAction.animate(with: textures, timePerFrame: rhythm.frameInterval)
+        let cycles = rhythm.maxCycles ?? 1
+        let interactionAction = SKAction.sequence([
+            SKAction.repeat(playAction, count: cycles),
+            SKAction.wait(forDuration: duration),
+            SKAction.run { [weak self] in
+                // 恢复当前情绪状态动画
+                self?.playAnimation(state: self?.currentState ?? .idle)
+            }
+        ])
+
+        petNode.removeAction(forKey: "animation")
+        petNode.run(interactionAction, withKey: "interaction")
     }
 
     func setSkin(_ name: String) {

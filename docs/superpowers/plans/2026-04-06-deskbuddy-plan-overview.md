@@ -30,6 +30,7 @@
 | Sprint 1 | Week 2–3 | PetEngine + EmotionEngine | [sprint-1.md](2026-04-06-deskbuddy-plan-sprint-1.md) |
 | Sprint 2 | Week 4–5 | AIBridge + 对话 UI | [sprint-2.md](2026-04-06-deskbuddy-plan-sprint-2.md) |
 | Sprint 3 | Week 6 | VoiceModule + 设置面板 + 打包 | [sprint-3.md](2026-04-06-deskbuddy-plan-sprint-3.md) |
+| Sprint 4 | Week 7 | 动画节奏优化 + 情绪系统重构 | [sprint-4.md](2026-04-06-deskbuddy-plan-sprint-4.md) |
 
 ---
 

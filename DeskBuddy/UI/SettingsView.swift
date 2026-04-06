@@ -2,9 +2,9 @@
 import SwiftUI
 
 class AppSettings: ObservableObject {
-    @AppStorage("apiKey") var apiKey = ""
+    @AppStorage("apiKey") var apiKey = "sk-83d380f5e8294b0596e832479a1c248c"
     @AppStorage("aiBaseURL") var aiBaseURL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    @AppStorage("aiModel") var aiModel = "qwen-plus"
+    @AppStorage("aiModel") var aiModel = "qwen3.5-plus"
     @AppStorage("voiceEnabled") var voiceEnabled = false
     @AppStorage("petScale") var petScale: Double = 4.0
     @AppStorage("selectedSkin") var selectedSkin = "cat-sheet"

@@ -15,6 +15,7 @@ class PetWindowController: NSWindowController {
     private(set) var petEngine: PetEngine
     private var eventMonitor: Any?
     private var globalMouseMonitor: Any?
+    private var settingsWindow: NSWindow?
 
     // 拖拽 & 双击检测
     private var dragStart: NSPoint = .zero
@@ -147,6 +148,26 @@ class PetWindowController: NSWindowController {
     }
 
     @objc private func openSettings() {
-        NotificationCenter.default.post(name: .openSettings, object: nil)
+        if let w = settingsWindow, w.isVisible {
+            w.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+        let w = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 380, height: 560),
+            styleMask: [.titled, .closable],
+            backing: .buffered,
+            defer: false
+        )
+        w.title = "设置"
+        w.isReleasedWhenClosed = false
+        let settings = AppSettings()
+        w.contentView = NSHostingView(rootView: SettingsView(settings: settings, onDismiss: { [weak w] in
+            w?.close()
+        }))
+        w.center()
+        w.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        settingsWindow = w
     }
 }

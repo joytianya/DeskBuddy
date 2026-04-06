@@ -14,6 +14,7 @@ class AppSettings: ObservableObject {
 struct SettingsView: View {
     @ObservedObject var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
+    var onDismiss: (() -> Void)? = nil
 
     @State private var draftKey: String = ""
     @State private var draftBaseURL: String = ""
@@ -167,7 +168,7 @@ struct SettingsView: View {
 
             HStack {
                 Spacer()
-                Button("取消") { dismiss() }.keyboardShortcut(.cancelAction)
+                Button("取消") { doClose() }.keyboardShortcut(.cancelAction)
                 Button("保存") { save() }.keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
             }
             .padding()
@@ -186,6 +187,10 @@ struct SettingsView: View {
         .foregroundColor(draftModel == m ? .white : .primary)
         .cornerRadius(6)
         .onTapGesture { draftModel = m }
+    }
+
+    private func doClose() {
+        if let onDismiss { onDismiss() } else { dismiss() }
     }
 
     private func pingAPI() {
@@ -267,7 +272,7 @@ struct SettingsView: View {
         settings.aiBaseURL = draftBaseURL
         settings.aiModel = draftModel
         settings.petColorHex = draftColorHex
-        dismiss()
+        doClose()
     }
 }
 

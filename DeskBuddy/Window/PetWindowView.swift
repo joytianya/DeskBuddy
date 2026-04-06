@@ -7,7 +7,6 @@ struct PetWindowView: View {
     @ObservedObject var emotionEngine: EmotionEngine
     @StateObject private var aiBridge = AIBridge()
     @StateObject private var settings = AppSettings()
-    @State private var showSettings = false
 
     init(emotionEngine: EmotionEngine) {
         let scene = PetEngine(size: CGSize(width: 128, height: 128))
@@ -28,16 +27,9 @@ struct PetWindowView: View {
                 }
                 .onChange(of: settings.selectedSkin) { engine.setSkin($0) }
                 .onChange(of: settings.petScale) { engine.setPetScale(CGFloat($0)) }
-                .sheet(isPresented: $showSettings) {
-                    SettingsView(settings: settings)
-                }
 
             ChatBubbleView(aiBridge: aiBridge, emotionEngine: emotionEngine, voiceEnabled: settings.voiceEnabled)
         }
         .frame(width: 400, height: 400)
-        .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
-            NSApp.activate(ignoringOtherApps: true)
-            showSettings = true
-        }
     }
 }

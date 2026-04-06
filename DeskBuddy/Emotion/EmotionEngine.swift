@@ -41,9 +41,8 @@ class EmotionEngine: ObservableObject {
 
         // 检查系统空闲时间，长时间空闲时趴着休息
         let idleMinutes = SystemSignal.currentIdleMinutes()
-        if idleMinutes > 10 {
-            // 系统空闲超过 10 分钟 → lying（趴着或前爪着地）
-            // 根据情绪分数决定具体姿态
+        if idleMinutes > 3 {
+            // 系统空闲超过 3 分钟 → lying（趴着或前爪着地）
             return .lying
         }
 

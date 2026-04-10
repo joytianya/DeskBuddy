@@ -9,16 +9,16 @@ class Dog3DModel {
         let dog = SCNNode()
         dog.name = "dog"
 
-        // 身体 - 椭球形（使用Sphere + scale）
+        // 身体 - 椭球形（使用Sphere + scale，比例调整）
         let body = SCNNode(geometry: SCNSphere(radius: 0.4))
-        body.scale = SCNVector3(1.2, 0.8, 0.9)  // 椭球形状
-        body.position = SCNVector3(0, 0.35, 0)
+        body.scale = SCNVector3(1.4, 0.75, 0.85)  // 更长的身体，稍矮
+        body.position = SCNVector3(0, 0.32, 0)
         body.name = "body"
         dog.addChildNode(body)
 
-        // 头部 - 球形
-        let head = SCNNode(geometry: SCNSphere(radius: 0.28))
-        head.position = SCNVector3(0.5, 0.55, 0)
+        // 头部 - 球形（比例增大）
+        let head = SCNNode(geometry: SCNSphere(radius: 0.32))
+        head.position = SCNVector3(0.55, 0.5, 0)
         head.name = "head"
         body.addChildNode(head)
 
@@ -81,17 +81,43 @@ class Dog3DModel {
         tail.name = "tail"
         dog.addChildNode(tail)
 
+        // 身体斑点 - 增加视觉细节
+        addSpots(to: body)
+
         // 应用材质
         applyMaterials(to: dog)
 
         return dog
     }
 
-    /// 创建腿部节点
+    /// 创建腿部节点（比例调整，稍短）
     private static func createLeg() -> SCNNode {
-        let leg = SCNNode(geometry: SCNCylinder(radius: 0.08, height: 0.35))
-        leg.position.y = 0.175
+        let leg = SCNNode(geometry: SCNCylinder(radius: 0.08, height: 0.28))
+        leg.position.y = 0.14
         return leg
+    }
+
+    /// 添加身体斑点（增加视觉细节）
+    private static func addSpots(to body: SCNNode) {
+        // 斑点材质 - 深棕色
+        let spotMaterial = SCNMaterial()
+        spotMaterial.diffuse.contents = NSColor(red: 0.7, green: 0.5, blue: 0.35, alpha: 1.0)
+
+        // 创建几个斑点，分布在身体两侧
+        let spotPositions: [SCNVector3] = [
+            SCNVector3(0.15, 0.1, 0.25),   // 右侧上方
+            SCNVector3(-0.2, 0.0, 0.2),    // 左侧中部
+            SCNVector3(0.3, -0.1, 0.18),   // 右侧下方
+            SCNVector3(-0.1, 0.15, -0.22), // 左侧上方背面
+        ]
+
+        for (index, pos) in spotPositions.enumerated() {
+            let spot = SCNNode(geometry: SCNSphere(radius: 0.08))
+            spot.position = pos
+            spot.name = "spot\(index)"
+            spot.geometry?.materials = [spotMaterial]
+            body.addChildNode(spot)
+        }
     }
 
     /// 应用材质（浅色系 - 米色/奶油色）

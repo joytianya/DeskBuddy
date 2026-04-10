@@ -32,21 +32,43 @@ class SceneKitEngine: SCNScene, PetRenderEngine {
     }
 
     private func setupCameraAndLights() {
-        // 相机 - 正面视角，明确看向狗
+        // 相机 - 正面视角略偏上方，更好地展示小狗面部
         let camera = SCNNode()
         camera.name = "camera"
         camera.camera = SCNCamera()
-        camera.camera?.fieldOfView = 60
-        camera.position = SCNVector3(0, 0.5, 5)
-        camera.look(at: SCNVector3(0, 0.5, 0))  // 明确看向狗的中心
+        camera.camera?.fieldOfView = 50  // 减小FOV让透视更自然
+        camera.position = SCNVector3(0, 0.8, 4.5)  // 稍高位置，更近
+        camera.look(at: SCNVector3(0, 0.3, 0))  // 看向狗的中心偏下
         rootNode.addChildNode(camera)
 
-        // 强环境光
+        // 强环境光（基础亮度）
         let ambientLight = SCNNode()
         ambientLight.light = SCNLight()
         ambientLight.light?.type = .ambient
-        ambientLight.light?.color = NSColor.white
+        ambientLight.light?.color = NSColor(white: 0.4, alpha: 1.0)  // 降低强度
+        ambientLight.light?.name = "ambient"
         rootNode.addChildNode(ambientLight)
+
+        // 方向光（产生阴影和高光，增强3D效果）
+        let directionalLight = SCNNode()
+        directionalLight.light = SCNLight()
+        directionalLight.light?.type = .directional
+        directionalLight.light?.color = NSColor(white: 0.8, alpha: 1.0)
+        directionalLight.light?.castsShadow = false  // 简化渲染
+        directionalLight.position = SCNVector3(2, 3, 2)  // 从右上前方照射
+        directionalLight.look(at: SCNVector3(0, 0, 0))
+        directionalLight.light?.name = "directional"
+        rootNode.addChildNode(directionalLight)
+
+        // 补光（从另一侧，减少阴影过深）
+        let fillLight = SCNNode()
+        fillLight.light = SCNLight()
+        fillLight.light?.type = .directional
+        fillLight.light?.color = NSColor(white: 0.3, alpha: 1.0)
+        fillLight.position = SCNVector3(-2, 1, 1)
+        fillLight.look(at: SCNVector3(0, 0, 0))
+        fillLight.light?.name = "fill"
+        rootNode.addChildNode(fillLight)
     }
 
     private func bindStateChanges() {

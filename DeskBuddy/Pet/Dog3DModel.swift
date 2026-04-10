@@ -76,13 +76,10 @@ class Dog3DModel {
 
         // 尾巴 - 圆锥形，可摇摆
         let tail = SCNNode(geometry: SCNCone(topRadius: 0.02, bottomRadius: 0.08, height: 0.25))
-        tail.position = SCNVector3(-0.55, 0.5, 0)
+        tail.position = SCNVector3(-0.55, 0.45, 0)
         tail.eulerAngles = SCNVector3(0.8, 0, 0)  // 向上倾斜
         tail.name = "tail"
         dog.addChildNode(tail)
-
-        // 身体斑点 - 增加视觉细节
-        addSpots(to: body)
 
         // 应用材质
         applyMaterials(to: dog)
@@ -95,29 +92,6 @@ class Dog3DModel {
         let leg = SCNNode(geometry: SCNCylinder(radius: 0.08, height: 0.28))
         leg.position.y = 0.14
         return leg
-    }
-
-    /// 添加身体斑点（增加视觉细节）
-    private static func addSpots(to body: SCNNode) {
-        // 斑点材质 - 深棕色
-        let spotMaterial = SCNMaterial()
-        spotMaterial.diffuse.contents = NSColor(red: 0.7, green: 0.5, blue: 0.35, alpha: 1.0)
-
-        // 创建几个斑点，分布在身体两侧
-        let spotPositions: [SCNVector3] = [
-            SCNVector3(0.15, 0.1, 0.25),   // 右侧上方
-            SCNVector3(-0.2, 0.0, 0.2),    // 左侧中部
-            SCNVector3(0.3, -0.1, 0.18),   // 右侧下方
-            SCNVector3(-0.1, 0.15, -0.22), // 左侧上方背面
-        ]
-
-        for (index, pos) in spotPositions.enumerated() {
-            let spot = SCNNode(geometry: SCNSphere(radius: 0.08))
-            spot.position = pos
-            spot.name = "spot\(index)"
-            spot.geometry?.materials = [spotMaterial]
-            body.addChildNode(spot)
-        }
     }
 
     /// 应用材质（浅色系 - 米色/奶油色）

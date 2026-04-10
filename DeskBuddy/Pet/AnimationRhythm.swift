@@ -8,10 +8,43 @@ struct AnimationRhythm {
     let frameInterval: TimeInterval   // 帧间隔（秒）
     let maxCycles: Int?               // nil = 无限循环，有限值 = 每轮播放次数上限
 
+    /// 从 ConfigStore 读取配置，向后兼容无配置时使用默认值
     static func forState(_ state: PetState) -> AnimationRhythm {
+        let config = ConfigStore.shared
+        let key = stateName(for: state)
+
+        // 尝试从配置读取
+        if let rhythmConfig = config.animationRhythms[key] {
+            return AnimationRhythm(
+                playDuration: rhythmConfig.playDuration,
+                pauseDuration: rhythmConfig.pauseDuration,
+                frameInterval: rhythmConfig.frameInterval,
+                maxCycles: rhythmConfig.maxCycles
+            )
+        }
+
+        // fallback 默认值（兼容旧配置）
+        return defaultRhythm(for: state)
+    }
+
+    /// 状态名映射（用于配置文件 key）
+    private static func stateName(for state: PetState) -> String {
+        switch state {
+        case .idle: return "idle"
+        case .happy: return "happy"
+        case .sleepy: return "sleepy"
+        case .anxious: return "anxious"
+        case .bored: return "bored"
+        case .excited: return "excited"
+        case .clingy: return "clingy"
+        case .lying: return "lying"
+        }
+    }
+
+    /// 默认动画节奏（硬编码 fallback）
+    private static func defaultRhythm(for state: PetState) -> AnimationRhythm {
         switch state {
         case .idle:
-            // idle 状态：跳跃动画，跳2次后停顿，不一直跳
             return AnimationRhythm(playDuration: 1.0, pauseDuration: 3.0, frameInterval: 0.15, maxCycles: 2)
         case .happy:
             return AnimationRhythm(playDuration: 1.5, pauseDuration: 2.5, frameInterval: 0.15, maxCycles: nil)
@@ -22,12 +55,10 @@ struct AnimationRhythm {
         case .bored:
             return AnimationRhythm(playDuration: 1.0, pauseDuration: 4.0, frameInterval: 0.25, maxCycles: nil)
         case .excited:
-            // excited 特殊处理：跳2次后停顿，不无限跳
             return AnimationRhythm(playDuration: 1.0, pauseDuration: 2.0, frameInterval: 0.12, maxCycles: 2)
         case .clingy:
             return AnimationRhythm(playDuration: 3.0, pauseDuration: 1.0, frameInterval: 0.18, maxCycles: nil)
         case .lying:
-            // 趴着休息：很慢的动画，长时间停顿
             return AnimationRhythm(playDuration: 5.0, pauseDuration: 8.0, frameInterval: 0.50, maxCycles: nil)
         }
     }

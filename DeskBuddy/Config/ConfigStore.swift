@@ -2,6 +2,14 @@
 import Foundation
 import SwiftUI
 
+/// 动画节奏配置（可序列化）
+struct AnimationRhythmConfig: Codable {
+    var playDuration: Double
+    var pauseDuration: Double
+    var frameInterval: Double
+    var maxCycles: Int?   // nil = 无限循环
+}
+
 /// 配置存储：保存到 ~/.deskbuddy/config.json
 class ConfigStore: ObservableObject {
     static let shared = ConfigStore()
@@ -33,6 +41,24 @@ class ConfigStore: ObservableObject {
     @Published var renderMode: String = "3d" {
         didSet { save() }
     }
+    /// 动画节奏配置：key 为状态名（idle, happy 等）
+    @Published var animationRhythms: [String: AnimationRhythmConfig] = defaultAnimationRhythms() {
+        didSet { save() }
+    }
+
+    /// 默认动画节奏配置（8 个状态全覆盖）
+    static func defaultAnimationRhythms() -> [String: AnimationRhythmConfig] {
+        return [
+            "idle": AnimationRhythmConfig(playDuration: 1.0, pauseDuration: 3.0, frameInterval: 0.15, maxCycles: 2),
+            "happy": AnimationRhythmConfig(playDuration: 1.5, pauseDuration: 2.5, frameInterval: 0.15, maxCycles: nil),
+            "sleepy": AnimationRhythmConfig(playDuration: 4.0, pauseDuration: 1.0, frameInterval: 0.30, maxCycles: nil),
+            "anxious": AnimationRhythmConfig(playDuration: 0.8, pauseDuration: 0.5, frameInterval: 0.10, maxCycles: nil),
+            "bored": AnimationRhythmConfig(playDuration: 1.0, pauseDuration: 4.0, frameInterval: 0.25, maxCycles: nil),
+            "excited": AnimationRhythmConfig(playDuration: 1.0, pauseDuration: 2.0, frameInterval: 0.12, maxCycles: 2),
+            "clingy": AnimationRhythmConfig(playDuration: 3.0, pauseDuration: 1.0, frameInterval: 0.18, maxCycles: nil),
+            "lying": AnimationRhythmConfig(playDuration: 5.0, pauseDuration: 8.0, frameInterval: 0.50, maxCycles: nil)
+        ]
+    }
 
     private init() {
         // 配置目录: ~/.deskbuddy/
@@ -57,7 +83,8 @@ class ConfigStore: ObservableObject {
         var petScale: Double = 4.0
         var selectedSkin: String = "cat-sheet"
         var petColorHex: String = "#FFFFFF"
-        var renderMode: String = "3d"  // 默认3D模式
+        var renderMode: String = "3d"
+        var animationRhythms: [String: AnimationRhythmConfig]?  // Optional 保持向后兼容
     }
 
     // MARK: - Load/Save
@@ -81,6 +108,27 @@ class ConfigStore: ObservableObject {
         selectedSkin = dict["selectedSkin"] as? String ?? "cat-sheet"
         petColorHex = dict["petColorHex"] as? String ?? "#FFFFFF"
         renderMode = dict["renderMode"] as? String ?? "3d"  // 新字段默认3d
+        // 加载动画节奏配置（向后兼容：无字段时使用默认值）
+        if let rhythmsDict = dict["animationRhythms"] as? [String: Any] {
+            var loadedRhythms: [String: AnimationRhythmConfig] = [:]
+            for (key, value) in rhythmsDict {
+                if let rhythmDict = value as? [String: Any],
+                   let playDuration = rhythmDict["playDuration"] as? Double,
+                   let pauseDuration = rhythmDict["pauseDuration"] as? Double,
+                   let frameInterval = rhythmDict["frameInterval"] as? Double {
+                    let maxCycles = rhythmDict["maxCycles"] as? Int
+                    loadedRhythms[key] = AnimationRhythmConfig(
+                        playDuration: playDuration,
+                        pauseDuration: pauseDuration,
+                        frameInterval: frameInterval,
+                        maxCycles: maxCycles
+                    )
+                }
+            }
+            if !loadedRhythms.isEmpty {
+                animationRhythms = loadedRhythms
+            }
+        }
     }
 
     private var saveDebounce: DispatchWorkItem?
@@ -98,7 +146,8 @@ class ConfigStore: ObservableObject {
                 petScale: self.petScale,
                 selectedSkin: self.selectedSkin,
                 petColorHex: self.petColorHex,
-                renderMode: self.renderMode
+                renderMode: self.renderMode,
+                animationRhythms: self.animationRhythms
             )
             self.writeConfig(config)
         }
@@ -106,11 +155,24 @@ class ConfigStore: ObservableObject {
     }
 
     private func writeConfig(_ config: Config) {
+        // 构建 animationRhythms dict
+        var rhythmsDict: [String: Any] = [:]
+        if let rhythms = config.animationRhythms {
+            for (key, rhythm) in rhythms {
+                rhythmsDict[key] = [
+                    "playDuration": rhythm.playDuration,
+                    "pauseDuration": rhythm.pauseDuration,
+                    "frameInterval": rhythm.frameInterval,
+                    "maxCycles": rhythm.maxCycles as Any
+                ]
+            }
+        }
         // 直接用 JSONSerialization 输出，不转义斜杠
         let dict: [String: Any] = [
             "aiBaseURL": config.aiBaseURL,
             "aiModel": config.aiModel,
             "apiKey": config.apiKey,
+            "animationRhythms": rhythmsDict,
             "petColorHex": config.petColorHex,
             "petScale": config.petScale,
             "renderMode": config.renderMode,
@@ -165,7 +227,7 @@ class ConfigStore: ObservableObject {
             apiKey: apiKey, aiBaseURL: aiBaseURL, aiModel: aiModel,
             voiceEnabled: voiceEnabled, petScale: petScale,
             selectedSkin: selectedSkin, petColorHex: petColorHex,
-            renderMode: renderMode
+            renderMode: renderMode, animationRhythms: animationRhythms
         )
         writeConfig(config)
     }

@@ -27,6 +27,9 @@ class AppSettings: ObservableObject {
     @Published var renderMode: String {
         didSet { ConfigStore.shared.renderMode = renderMode }
     }
+    @Published var animationRhythms: [String: AnimationRhythmConfig] {
+        didSet { ConfigStore.shared.animationRhythms = animationRhythms }
+    }
 
     init() {
         let store = ConfigStore.shared
@@ -41,6 +44,7 @@ class AppSettings: ObservableObject {
         selectedSkin = store.selectedSkin
         petColorHex = store.petColorHex
         renderMode = store.renderMode
+        animationRhythms = store.animationRhythms
     }
 }
 
@@ -56,9 +60,16 @@ struct SettingsView: View {
     @State private var pickedColor: Color = .white
     @State private var detectStatus: DetectStatus = .idle
     @State private var pingStatus: PingStatus = .idle
+    // 动画节奏调节
+    @State private var selectedState: String = "idle"
+    @State private var draftPlayDuration: Double = 1.0
+    @State private var draftPauseDuration: Double = 3.0
+    @State private var draftFrameInterval: Double = 0.15
 
     enum DetectStatus { case idle, loading, ok, fail(String) }
     enum PingStatus { case idle, loading, ok, fail(String) }
+
+    private let animationStates = ["idle", "happy", "excited", "sleepy", "lying", "bored", "anxious", "clingy"]
 
     private let presetModels = [
         "qwen-plus", "qwen-max", "qwen-turbo",
@@ -213,6 +224,47 @@ struct SettingsView: View {
                     Toggle("启用语音", isOn: $settings.voiceEnabled)
                 }
 
+                Section("动画节奏") {
+                    // 状态选择器
+                    Picker("状态", selection: $selectedState) {
+                        ForEach(animationStates, id: \.self) { state in
+                            Text(stateLabel(state)).tag(state)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: selectedState) { newState in
+                        loadRhythmForState(newState)
+                    }
+
+                    // 参数调节 Slider
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("播放时长").font(.caption).foregroundStyle(.secondary)
+                        HStack {
+                            Slider(value: $draftPlayDuration, in: 0.5...5.0, step: 0.1)
+                                .onChange(of: draftPlayDuration) { _ in updateRhythm() }
+                            Text("\(String(format: "%.1f", draftPlayDuration))s").frame(width: 40)
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("停顿时长").font(.caption).foregroundStyle(.secondary)
+                        HStack {
+                            Slider(value: $draftPauseDuration, in: 0.5...10.0, step: 0.5)
+                                .onChange(of: draftPauseDuration) { _ in updateRhythm() }
+                            Text("\(String(format: "%.1f", draftPauseDuration))s").frame(width: 40)
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("帧速度").font(.caption).foregroundStyle(.secondary)
+                        HStack {
+                            Slider(value: $draftFrameInterval, in: 0.05...0.5, step: 0.05)
+                                .onChange(of: draftFrameInterval) { _ in updateRhythm() }
+                            Text("\(String(format: "%.2f", draftFrameInterval))s").frame(width: 40)
+                        }
+                    }
+                }
+
                 Section {
                     Button("清除对话记录", role: .destructive) {
                         ConversationStore.shared.clearAll()
@@ -321,12 +373,48 @@ struct SettingsView: View {
         pickedColor = color
     }
 
+    // MARK: - 动画节奏辅助函数
+
+    private func stateLabel(_ state: String) -> String {
+        switch state {
+        case "idle": return "悠闲"
+        case "happy": return "开心"
+        case "excited": return "兴奋"
+        case "sleepy": return "困倦"
+        case "lying": return "趴着"
+        case "bored": return "无聊"
+        case "anxious": return "焦虑"
+        case "clingy": return "粘人"
+        default: return state
+        }
+    }
+
+    private func loadRhythmForState(_ state: String) {
+        if let rhythm = settings.animationRhythms[state] {
+            draftPlayDuration = rhythm.playDuration
+            draftPauseDuration = rhythm.pauseDuration
+            draftFrameInterval = rhythm.frameInterval
+        }
+    }
+
+    private func updateRhythm() {
+        let newRhythm = AnimationRhythmConfig(
+            playDuration: draftPlayDuration,
+            pauseDuration: draftPauseDuration,
+            frameInterval: draftFrameInterval,
+            maxCycles: settings.animationRhythms[selectedState]?.maxCycles
+        )
+        settings.animationRhythms[selectedState] = newRhythm
+    }
+
     private func loadDraft() {
         draftKey = settings.apiKey
         draftBaseURL = settings.aiBaseURL
         draftModel = settings.aiModel
         draftColorHex = settings.petColorHex
         pickedColor = Color(hex: draftColorHex) ?? .white
+        // 加载当前选中状态的动画节奏
+        loadRhythmForState(selectedState)
     }
 
     private func save() {

@@ -15,6 +15,16 @@ struct PetWindowView: View {
     @StateObject private var spriteKitContainer = SpriteKitContainer()
     @State private var cancellables = Set<AnyCancellable>()
 
+    /// 计算基础尺寸：2D模式128px，3D模式200px
+    private var baseSize: CGFloat {
+        config.renderMode == "3d" ? 200 : 128
+    }
+
+    /// 计算窗口尺寸：基础尺寸 × petScale
+    private var windowSize: CGFloat {
+        baseSize * CGFloat(config.petScale)
+    }
+
     init(emotionEngine: EmotionEngine, activeEngine: ActiveRenderEngine) {
         self._emotionEngine = ObservedObject(wrappedValue: emotionEngine)
         self._activeEngine = ObservedObject(wrappedValue: activeEngine)
@@ -28,7 +38,7 @@ struct PetWindowView: View {
                     scene: sceneKitContainer.scene,
                     options: [.autoenablesDefaultLighting]
                 )
-                .frame(width: 128, height: 128)
+                .frame(width: baseSize, height: baseSize)
                 .background(Color.clear)
                 .onAppear {
                     bindEmotionToEngine(sceneKitContainer.scene)
@@ -44,7 +54,7 @@ struct PetWindowView: View {
                 }
             } else {
                 SpriteView(scene: spriteKitContainer.scene, options: [.allowsTransparency])
-                    .frame(width: 128, height: 128)
+                    .frame(width: baseSize, height: baseSize)
                     .background(Color.clear)
                     .colorMultiply(Color(hex: config.petColorHex) ?? .white)
                     .onAppear {
@@ -59,7 +69,7 @@ struct PetWindowView: View {
 
             ChatBubbleView(aiBridge: aiBridge, emotionEngine: emotionEngine, voiceEnabled: config.voiceEnabled)
         }
-        .frame(width: 400, height: 400)
+        .frame(width: windowSize, height: windowSize)
     }
 
     private func bindEmotionToEngine(_ engine: PetRenderEngine) {

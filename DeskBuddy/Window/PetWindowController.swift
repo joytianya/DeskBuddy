@@ -35,9 +35,21 @@ class PetWindowController: NSWindowController {
     private var lastMousePos: NSPoint = .zero
     private var lastMouseTime: TimeInterval = 0
 
+    /// 计算窗口尺寸：2D模式128px基础，3D模式200px基础，乘以petScale
+    private static func calculateWindowSize() -> CGFloat {
+        let config = ConfigStore.shared
+        let baseSize: CGFloat = config.renderMode == "3d" ? 200 : 128
+        return baseSize * CGFloat(config.petScale)
+    }
+
     convenience init(emotionEngine: EmotionEngine) {
+        // 直接计算窗口尺寸（convenience init 中不能调用静态方法）
+        let config = ConfigStore.shared
+        let baseSize: CGFloat = config.renderMode == "3d" ? 200 : 128
+        let windowSize = baseSize * CGFloat(config.petScale)
+
         let panel = PetPanel(
-            contentRect: NSRect(x: 100, y: 100, width: 400, height: 400),
+            contentRect: NSRect(x: 100, y: 100, width: windowSize, height: windowSize),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -46,7 +58,7 @@ class PetWindowController: NSWindowController {
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.hasShadow = false
-        panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
+        panel.collectionBehavior = [.canJoinAllSpaces, NSWindow.CollectionBehavior.stationary]
         panel.isMovableByWindowBackground = true
 
         // 先调用init
@@ -58,6 +70,34 @@ class PetWindowController: NSWindowController {
 
         setupEventMonitor()
         setupGlobalMouseMonitor()
+        setupConfigListener()
+    }
+
+    /// 监听配置变化，动态调整窗口尺寸
+    private func setupConfigListener() {
+        let config = ConfigStore.shared
+        // 监听 petScale 和 renderMode 变化
+        config.$petScale
+            .combineLatest(config.$renderMode)
+            .sink { [weak self] _ in
+                self?.updateWindowSize()
+            }
+            .store(in: &cancellables)
+    }
+
+    /// 更新窗口尺寸
+    private func updateWindowSize() {
+        guard let window = window else { return }
+        let newSize = Self.calculateWindowSize()
+        let currentFrame = window.frame
+        // 保持窗口中心位置不变
+        let newFrame = NSRect(
+            x: currentFrame.midX - newSize / 2,
+            y: currentFrame.midY - newSize / 2,
+            width: newSize,
+            height: newSize
+        )
+        window.setFrame(newFrame, display: true)
     }
 
     override init(window: NSWindow?) {

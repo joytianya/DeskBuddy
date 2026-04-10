@@ -26,24 +26,33 @@ struct Dog3DAnimations {
         }
     }
 
-    /// idle - 微微呼吸（更慢更自然）
+    /// idle - 微微呼吸（使用 AnimationRhythm）
     static func idleAnimation() -> SCNAction {
+        let rhythm = AnimationRhythm.forState(.idle)
+        // 使用 rhythm.frameInterval 作为呼吸动画的帧速度
+        let breatheDuration = rhythm.playDuration / 2  // 单次呼吸（放大+缩小）
         let breathe = SCNAction.sequence([
-            SCNAction.scale(to: 1.02, duration: 1.5),  // 更慢的放大
-            SCNAction.scale(to: 1.0, duration: 1.5),   // 更慢的缩小
-            SCNAction.wait(duration: 2.0)              // 添加停顿
+            SCNAction.scale(to: 1.02, duration: breatheDuration),
+            SCNAction.scale(to: 1.0, duration: breatheDuration)
         ])
-        return SCNAction.repeatForever(breathe)
+        // maxCycles 控制呼吸次数，然后停顿
+        let cycles = rhythm.maxCycles ?? 1
+        let sequence = SCNAction.sequence([
+            SCNAction.repeat(breathe, count: cycles),
+            SCNAction.wait(duration: rhythm.pauseDuration)
+        ])
+        return SCNAction.repeatForever(sequence)
     }
 
-    /// happy - 尾巴快速摇摆
+    /// happy - 尾巴快速摇摆（使用 AnimationRhythm）
     static func happyAnimation(_ dogNode: SCNNode) -> SCNAction {
-        let tail = dogNode.childNode(withName: "tail", recursively: true)
+        let rhythm = AnimationRhythm.forState(.happy)
+        // 尾巴摇摆使用 rhythm.frameInterval 作为节奏（作用于整个 dogNode）
+        let wagDuration = rhythm.frameInterval
         let wag = SCNAction.sequence([
-            SCNAction.rotateTo(x: 0.8, y: 0, z: 0.4, duration: 0.15),
-            SCNAction.rotateTo(x: 0.8, y: 0, z: -0.4, duration: 0.15)
+            SCNAction.rotateTo(x: 0.8, y: 0, z: 0.4, duration: wagDuration),
+            SCNAction.rotateTo(x: 0.8, y: 0, z: -0.4, duration: wagDuration)
         ])
-        let tailWag = SCNAction.repeatForever(wag)
 
         // 身体轻微跳跃
         let bounce = SCNAction.sequence([
@@ -51,17 +60,26 @@ struct Dog3DAnimations {
             SCNAction.moveBy(x: 0, y: -0.1, z: 0, duration: 0.2)
         ])
 
-        return SCNAction.group([
-            SCNAction.repeatForever(bounce),
-            tailWag
+        // 计算 playDuration 内的完整动作次数
+        let bounceCycleDuration = 0.4
+        let cycles = max(1, Int(rhythm.playDuration / bounceCycleDuration))
+
+        let sequence = SCNAction.sequence([
+            SCNAction.group([
+                SCNAction.repeat(bounce, count: cycles),
+                SCNAction.repeat(wag, count: cycles * 2)  // 尾巴摇摆更快
+            ]),
+            SCNAction.wait(duration: rhythm.pauseDuration)
         ])
+        return SCNAction.repeatForever(sequence)
     }
 
-    /// excited - 连续跳跃 + 尾巴疯狂摇摆
+    /// excited - 连续跳跃 + 尾巴疯狂摇摆（使用 AnimationRhythm）
     static func excitedAnimation(_ dogNode: SCNNode) -> SCNAction {
+        let rhythm = AnimationRhythm.forState(.excited)
         let jump = SCNAction.sequence([
-            SCNAction.moveBy(x: 0, y: 0.3, z: 0, duration: 0.15),
-            SCNAction.moveBy(x: 0, y: -0.3, z: 0, duration: 0.15)
+            SCNAction.moveBy(x: 0, y: 0.3, z: 0, duration: rhythm.frameInterval),
+            SCNAction.moveBy(x: 0, y: -0.3, z: 0, duration: rhythm.frameInterval)
         ])
 
         let wag = SCNAction.sequence([
@@ -69,66 +87,106 @@ struct Dog3DAnimations {
             SCNAction.rotateTo(x: 0.8, y: 0, z: -0.5, duration: 0.08)
         ])
 
-        return SCNAction.group([
-            SCNAction.repeat(jump, count: 3),
-            SCNAction.repeatForever(wag)
+        // excited 有 maxCycles = 2，跳完后停顿
+        let cycles = rhythm.maxCycles ?? 2
+        let sequence = SCNAction.sequence([
+            SCNAction.group([
+                SCNAction.repeat(jump, count: cycles),
+                SCNAction.repeat(wag, count: cycles * 4)  // 尾巴摇摆更快
+            ]),
+            SCNAction.wait(duration: rhythm.pauseDuration)
         ])
+        return SCNAction.repeatForever(sequence)
     }
 
-    /// sleepy - 缓慢呼吸
+    /// sleepy - 缓慢呼吸（使用 AnimationRhythm）
     static func sleepyAnimation() -> SCNAction {
+        let rhythm = AnimationRhythm.forState(.sleepy)
+        // 使用 rhythm.frameInterval 作为呼吸节奏
+        let breatheDuration = rhythm.frameInterval * 4  // 更慢的呼吸
         let breathe = SCNAction.sequence([
-            SCNAction.scale(to: 0.98, duration: 2.0),
-            SCNAction.scale(to: 1.0, duration: 2.0)
+            SCNAction.scale(to: 0.98, duration: breatheDuration),
+            SCNAction.scale(to: 1.0, duration: breatheDuration)
         ])
-        return SCNAction.repeatForever(breathe)
+        // 计算 playDuration 内的完整呼吸次数
+        let cycles = max(1, Int(rhythm.playDuration / (breatheDuration * 2)))
+        let sequence = SCNAction.sequence([
+            SCNAction.repeat(breathe, count: cycles),
+            SCNAction.wait(duration: rhythm.pauseDuration)
+        ])
+        return SCNAction.repeatForever(sequence)
     }
 
-    /// lying - 身体躺下
+    /// lying - 身体躺下（使用 AnimationRhythm）
     static func lyingAnimation() -> SCNAction {
+        let rhythm = AnimationRhythm.forState(.lying)
         let lieDown = SCNAction.sequence([
             SCNAction.moveBy(x: 0, y: -0.25, z: 0, duration: 0.4),
             SCNAction.rotateTo(x: -1.0, y: 0, z: 0, duration: 0.4)
         ])
 
+        // 使用 rhythm.frameInterval 作为呼吸节奏
+        let breatheDuration = rhythm.frameInterval * 3
         let breathe = SCNAction.sequence([
-            SCNAction.scale(to: 0.95, duration: 3.0),
-            SCNAction.scale(to: 1.0, duration: 3.0)
+            SCNAction.scale(to: 0.95, duration: breatheDuration),
+            SCNAction.scale(to: 1.0, duration: breatheDuration)
         ])
 
-        return SCNAction.sequence([
+        // 计算 playDuration 内的完整呼吸次数
+        let cycles = max(1, Int(rhythm.playDuration / (breatheDuration * 2)))
+        let sequence = SCNAction.sequence([
             lieDown,
-            SCNAction.repeatForever(breathe)
+            SCNAction.repeat(breathe, count: cycles),
+            SCNAction.wait(duration: rhythm.pauseDuration)
         ])
+        return SCNAction.repeatForever(sequence)
     }
 
-    /// bored - 偶尔摇头
+    /// bored - 偶尔摇头（使用 AnimationRhythm）
     static func boredAnimation(_ dogNode: SCNNode) -> SCNAction {
-        let head = dogNode.childNode(withName: "head", recursively: true)
+        let rhythm = AnimationRhythm.forState(.bored)
+        // 摇头动作作用于整个 dogNode
         let shakeHead = SCNAction.sequence([
-            SCNAction.wait(duration: 2.0),
             SCNAction.rotateTo(x: 0, y: 0.2, z: 0, duration: 0.3),
             SCNAction.rotateTo(x: 0, y: -0.2, z: 0, duration: 0.3),
-            SCNAction.rotateTo(x: 0, y: 0, z: 0, duration: 0.3),
-            SCNAction.wait(duration: 3.0)
+            SCNAction.rotateTo(x: 0, y: 0, z: 0, duration: 0.3)
         ])
-        return SCNAction.repeatForever(shakeHead)
+        // 摇头动作总时长 0.9s
+        let shakeDuration = 0.9
+        let cycles = max(1, Int(rhythm.playDuration / shakeDuration))
+        let sequence = SCNAction.sequence([
+            SCNAction.repeat(shakeHead, count: cycles),
+            SCNAction.wait(duration: rhythm.pauseDuration)
+        ])
+        return SCNAction.repeatForever(sequence)
     }
 
-    /// anxious - 快速颤抖
+    /// anxious - 快速颤抖（使用 AnimationRhythm）
     static func anxiousAnimation() -> SCNAction {
+        let rhythm = AnimationRhythm.forState(.anxious)
+        // 使用 rhythm.frameInterval 作为颤抖节奏
         let shake = SCNAction.sequence([
-            SCNAction.moveBy(x: 0.03, y: 0, z: 0, duration: 0.05),
-            SCNAction.moveBy(x: -0.03, y: 0, z: 0, duration: 0.05)
+            SCNAction.moveBy(x: 0.03, y: 0, z: 0, duration: rhythm.frameInterval),
+            SCNAction.moveBy(x: -0.03, y: 0, z: 0, duration: rhythm.frameInterval)
         ])
-        return SCNAction.repeatForever(shake)
+        // 计算 playDuration 内的完整颤抖次数
+        let shakeCycleDuration = rhythm.frameInterval * 2
+        let cycles = max(1, Int(rhythm.playDuration / shakeCycleDuration))
+        let sequence = SCNAction.sequence([
+            SCNAction.repeat(shake, count: cycles),
+            SCNAction.wait(duration: rhythm.pauseDuration)
+        ])
+        return SCNAction.repeatForever(sequence)
     }
 
-    /// clingy - 摇尾巴 + 身体轻微前倾
+    /// clingy - 摇尾巴 + 身体轻微前倾（使用 AnimationRhythm）
     static func clingyAnimation(_ dogNode: SCNNode) -> SCNAction {
+        let rhythm = AnimationRhythm.forState(.clingy)
+        // 使用 rhythm.frameInterval 作为尾巴摇摆节奏
+        let wagDuration = rhythm.frameInterval
         let wag = SCNAction.sequence([
-            SCNAction.rotateTo(x: 0.8, y: 0, z: 0.3, duration: 0.12),
-            SCNAction.rotateTo(x: 0.8, y: 0, z: -0.3, duration: 0.12)
+            SCNAction.rotateTo(x: 0.8, y: 0, z: 0.3, duration: wagDuration),
+            SCNAction.rotateTo(x: 0.8, y: 0, z: -0.3, duration: wagDuration)
         ])
 
         let lean = SCNAction.sequence([
@@ -136,10 +194,18 @@ struct Dog3DAnimations {
             SCNAction.moveBy(x: -0.05, y: 0, z: 0, duration: 0.4)
         ])
 
-        return SCNAction.group([
-            SCNAction.repeatForever(wag),
-            SCNAction.repeatForever(lean)
+        // 计算 playDuration 内的完整动作次数
+        let leanCycleDuration = 0.8
+        let cycles = max(1, Int(rhythm.playDuration / leanCycleDuration))
+
+        let sequence = SCNAction.sequence([
+            SCNAction.group([
+                SCNAction.repeat(lean, count: cycles),
+                SCNAction.repeat(wag, count: cycles * 4)  // 尾巴摇摆更快
+            ]),
+            SCNAction.wait(duration: rhythm.pauseDuration)
         ])
+        return SCNAction.repeatForever(sequence)
     }
 
     // MARK: - 互动动画

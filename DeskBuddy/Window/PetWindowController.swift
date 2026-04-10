@@ -1,6 +1,7 @@
 // DeskBuddy/Window/PetWindowController.swift
 import AppKit
 import SwiftUI
+import Combine
 
 extension Notification.Name {
     static let openSettings = Notification.Name("DeskBuddy.openSettings")
@@ -12,12 +13,18 @@ private class PetPanel: NSPanel {
     override var canBecomeKey: Bool { true }
 }
 
+/// 当前活跃的渲染引擎引用（供外部访问）
+class ActiveRenderEngine: ObservableObject {
+    @Published var engine: PetRenderEngine?
+}
+
 class PetWindowController: NSWindowController {
-    private(set) var petEngine: PetEngine
+    private var activeEngine = ActiveRenderEngine()
     private var eventMonitor: Any?
     private var localMouseMonitor: Any?
     private var globalMouseMonitor: Any?
     private var settingsWindow: NSWindow?
+    private var cancellables = Set<AnyCancellable>()
 
     // 拖拽 & 双击检测
     private var dragStart: NSPoint = .zero
@@ -42,16 +49,18 @@ class PetWindowController: NSWindowController {
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
         panel.isMovableByWindowBackground = true
 
-        let petView = PetWindowView(emotionEngine: emotionEngine)
-        panel.contentView = NSHostingView(rootView: petView)
+        // 先调用init
         self.init(window: panel)
-        self.petEngine = petView.engine
+
+        // 然后创建petView并设置（使用已存在的activeEngine属性）
+        let petView = PetWindowView(emotionEngine: emotionEngine, activeEngine: activeEngine)
+        panel.contentView = NSHostingView(rootView: petView)
+
         setupEventMonitor()
         setupGlobalMouseMonitor()
     }
 
     override init(window: NSWindow?) {
-        self.petEngine = PetEngine(size: CGSize(width: 128, height: 128))
         super.init(window: window)
     }
 
@@ -75,17 +84,18 @@ class PetWindowController: NSWindowController {
                 self.dragStart = event.locationInWindow
                 self.isDragging = false
             case .leftMouseUp:
+                guard let engine = self.activeEngine.engine else { return event }
                 let dx = event.locationInWindow.x - self.dragStart.x
                 let dy = event.locationInWindow.y - self.dragStart.y
                 let dist = sqrt(dx*dx + dy*dy)
                 if dist > 8 {
                     // 拖拽松手 → 翻滚
-                    self.petEngine.onDropped()
+                    engine.onDropped()
                 } else {
                     // 点击：检测双击
                     let now = Date().timeIntervalSinceReferenceDate
                     if now - self.lastClickTime < 0.35 {
-                        self.petEngine.onDoubleClick()
+                        engine.onDoubleClick()
                         self.lastClickTime = 0
                     } else {
                         self.lastClickTime = now
@@ -131,7 +141,7 @@ class PetWindowController: NSWindowController {
     }
 
     private func handleMouseProximity() {
-        guard let window = window else { return }
+        guard let window = window, let engine = activeEngine.engine else { return }
         let mouseScreen = NSEvent.mouseLocation
         let petCenter = NSPoint(x: window.frame.midX, y: window.frame.midY)
 
@@ -153,7 +163,7 @@ class PetWindowController: NSWindowController {
 
         // 只在鼠标足够近时触发互动（< 150pt）
         if distance < 150 {
-            petEngine.onMouseNear(distance: distance, mouseX: mouseScreen.x, speed: speed)
+            engine.onMouseNear(distance: distance, mouseX: mouseScreen.x, speed: speed)
         }
     }
 
@@ -176,7 +186,7 @@ class PetWindowController: NSWindowController {
             return
         }
         let w = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 380, height: 560),
+            contentRect: NSRect(x: 0, y: 0, width: 380, height: 600),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false

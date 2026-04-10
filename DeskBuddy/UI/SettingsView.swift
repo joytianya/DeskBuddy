@@ -24,6 +24,9 @@ class AppSettings: ObservableObject {
     @Published var petColorHex: String {
         didSet { ConfigStore.shared.petColorHex = petColorHex }
     }
+    @Published var renderMode: String {
+        didSet { ConfigStore.shared.renderMode = renderMode }
+    }
 
     init() {
         let store = ConfigStore.shared
@@ -37,6 +40,7 @@ class AppSettings: ObservableObject {
         petScale = store.petScale
         selectedSkin = store.selectedSkin
         petColorHex = store.petColorHex
+        renderMode = store.renderMode
     }
 }
 
@@ -71,6 +75,20 @@ struct SettingsView: View {
         ("#FFF3D6", Color(red: 1, green: 0.95, blue: 0.84)),
         ("#E8D6FF", Color(red: 0.91, green: 0.84, blue: 1)),
     ]
+
+    // 辅助函数：创建颜色选择圆圈，避免编译器类型检查超时
+    private func colorCircle(hex: String, color: Color) -> some View {
+        Circle()
+            .fill(color)
+            .frame(width: 24, height: 24)
+            .overlay(
+                Circle().stroke(draftColorHex == hex ? Color.accentColor : Color.clear, lineWidth: 2)
+            )
+            .onTapGesture {
+                draftColorHex = hex
+                pickedColor = color
+            }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -153,12 +171,22 @@ struct SettingsView: View {
                 }
 
                 Section("外观") {
-                    Picker("皮肤", selection: $settings.selectedSkin) {
-                        Text("Cat").tag("cat-sheet")
-                        Text("Ghost").tag("ghost-sheet")
-                        Text("Robot").tag("robot-sheet")
+                    // 渲染模式切换
+                    Picker("渲染模式", selection: $settings.renderMode) {
+                        Text("3D 小狗").tag("3d")
+                        Text("2D 像素").tag("2d")
                     }
                     .pickerStyle(.segmented)
+
+                    // 2D模式才显示皮肤选项
+                    if settings.renderMode == "2d" {
+                        Picker("皮肤", selection: $settings.selectedSkin) {
+                            Text("Cat").tag("cat-sheet")
+                            Text("Ghost").tag("ghost-sheet")
+                            Text("Robot").tag("robot-sheet")
+                        }
+                        .pickerStyle(.segmented)
+                    }
 
                     HStack {
                         Text("大小")
@@ -167,16 +195,16 @@ struct SettingsView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("颜色叠加").font(.caption).foregroundStyle(.secondary)
+                        Text(settings.renderMode == "3d" ? "小狗颜色" : "颜色叠加").font(.caption).foregroundStyle(.secondary)
                         HStack(spacing: 10) {
                             ForEach(presetColors, id: \.0) { hex, color in
-                                Circle().fill(color).frame(width: 24, height: 24)
-                                    .overlay(Circle().stroke(draftColorHex == hex ? Color.accentColor : Color.clear, lineWidth: 2))
-                                    .onTapGesture { draftColorHex = hex; pickedColor = color }
+                                colorCircle(hex: hex, color: color)
                             }
                             ColorPicker("", selection: $pickedColor, supportsOpacity: false)
                                 .labelsHidden()
-                                .onChange(of: pickedColor) { draftColorHex = $0.toHex() ?? draftColorHex }
+                                .onChange(of: pickedColor, perform: { newValue in
+                                    draftColorHex = newValue.toHex() ?? draftColorHex
+                                })
                         }
                     }
                 }
@@ -286,6 +314,11 @@ struct SettingsView: View {
                 await MainActor.run { detectStatus = .fail("无法连接") }
             }
         }
+    }
+
+    private func selectColor(hex: String, color: Color) {
+        draftColorHex = hex
+        pickedColor = color
     }
 
     private func loadDraft() {

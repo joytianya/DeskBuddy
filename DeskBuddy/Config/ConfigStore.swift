@@ -29,6 +29,10 @@ class ConfigStore: ObservableObject {
     @Published var petColorHex: String = "#FFFFFF" {
         didSet { save() }
     }
+    /// 渲染模式：2d = 像素风，3d = SceneKit立体
+    @Published var renderMode: String = "3d" {
+        didSet { save() }
+    }
 
     private init() {
         // 配置目录: ~/.deskbuddy/
@@ -53,24 +57,30 @@ class ConfigStore: ObservableObject {
         var petScale: Double = 4.0
         var selectedSkin: String = "cat-sheet"
         var petColorHex: String = "#FFFFFF"
+        var renderMode: String = "3d"  // 默认3D模式
     }
 
     // MARK: - Load/Save
 
     private func load() {
-        guard let data = try? Data(contentsOf: configURL),
-              let config = try? JSONDecoder().decode(Config.self, from: data) else {
-            // 文件不存在或解析失败，使用默认值
+        guard let data = try? Data(contentsOf: configURL) else {
+            // 文件不存在，使用默认值
             return
         }
 
-        apiKey = config.apiKey
-        aiBaseURL = config.aiBaseURL
-        aiModel = config.aiModel
-        voiceEnabled = config.voiceEnabled
-        petScale = config.petScale
-        selectedSkin = config.selectedSkin
-        petColorHex = config.petColorHex
+        // 使用JSONSerialization更灵活地加载（兼容旧配置）
+        guard let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return
+        }
+
+        apiKey = dict["apiKey"] as? String ?? ""
+        aiBaseURL = dict["aiBaseURL"] as? String ?? "https://api.openai.com/v1"
+        aiModel = dict["aiModel"] as? String ?? "gpt-4o-mini"
+        voiceEnabled = dict["voiceEnabled"] as? Bool ?? false
+        petScale = dict["petScale"] as? Double ?? 4.0
+        selectedSkin = dict["selectedSkin"] as? String ?? "cat-sheet"
+        petColorHex = dict["petColorHex"] as? String ?? "#FFFFFF"
+        renderMode = dict["renderMode"] as? String ?? "3d"  // 新字段默认3d
     }
 
     private var saveDebounce: DispatchWorkItem?
@@ -87,7 +97,8 @@ class ConfigStore: ObservableObject {
                 voiceEnabled: self.voiceEnabled,
                 petScale: self.petScale,
                 selectedSkin: self.selectedSkin,
-                petColorHex: self.petColorHex
+                petColorHex: self.petColorHex,
+                renderMode: self.renderMode
             )
             self.writeConfig(config)
         }
@@ -102,6 +113,7 @@ class ConfigStore: ObservableObject {
             "apiKey": config.apiKey,
             "petColorHex": config.petColorHex,
             "petScale": config.petScale,
+            "renderMode": config.renderMode,
             "selectedSkin": config.selectedSkin,
             "voiceEnabled": config.voiceEnabled
         ]
@@ -152,7 +164,8 @@ class ConfigStore: ObservableObject {
         let config = Config(
             apiKey: apiKey, aiBaseURL: aiBaseURL, aiModel: aiModel,
             voiceEnabled: voiceEnabled, petScale: petScale,
-            selectedSkin: selectedSkin, petColorHex: petColorHex
+            selectedSkin: selectedSkin, petColorHex: petColorHex,
+            renderMode: renderMode
         )
         writeConfig(config)
     }

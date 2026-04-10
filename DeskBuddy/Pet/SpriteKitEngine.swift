@@ -1,14 +1,14 @@
-// DeskBuddy/Pet/PetEngine.swift
+// DeskBuddy/Pet/SpriteKitEngine.swift
 import SpriteKit
 import Combine
 
-class PetEngine: SKScene {
+/// SpriteKit 2D渲染引擎
+/// 实现PetRenderEngine协议，渲染像素风格宠物
+class SpriteKitEngine: SKScene, PetRenderEngine {
     private var petNode: SKSpriteNode!
-    private var currentState: PetState = .idle
+    private(set) var currentState: PetState = .idle
     private var skinName: String = "cat-sheet"
     private var cancellables = Set<AnyCancellable>()
-
-    // 互动状态（用于 bindStateChanges 检查）
 
     let stateSubject = PassthroughSubject<PetState, Never>()
 
@@ -75,7 +75,6 @@ class PetEngine: SKScene {
 
     // MARK: - 鼠标互动
 
-    /// 鼠标靠近时调用，distance 为鼠标到宠物窗口中心的距离（屏幕坐标 pt）
     func onMouseNear(distance: CGFloat, mouseX: CGFloat, speed: CGFloat) {
         guard let petNode = petNode else { return }
 
@@ -101,7 +100,6 @@ class PetEngine: SKScene {
         }
     }
 
-    /// 拖拽宠物松手后翻滚
     func onDropped() {
         guard let petNode = petNode else { return }
 
@@ -117,7 +115,6 @@ class PetEngine: SKScene {
         petNode.run(roll, withKey: "interaction")
     }
 
-    /// 双击宠物 → 开心跳跃
     func onDoubleClick() {
         guard let petNode = petNode else { return }
 

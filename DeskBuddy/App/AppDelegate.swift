@@ -23,11 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
         windowController = PetWindowController(emotionEngine: emotionEngine)
         windowController?.showWindow(nil)
-        emotionEngine.$currentState
-            .sink { [weak self] state in
-                self?.windowController?.petEngine.stateSubject.send(state)
-            }
-            .store(in: &cancellables)
+        // 状态绑定现在在PetWindowView内部处理
         emotionEngine.start()
     }
 

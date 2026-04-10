@@ -11,11 +11,13 @@
 		0667EC37B6C23A63B148F886 /* PetWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B66CC60C145B118B07BE56 /* PetWindowView.swift */; };
 		1B9158C753D71959F2CAAB83 /* ConversationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7418E066B4A7449B1CEEC3FB /* ConversationStore.swift */; };
 		2011B284CFC52C8F79C78F21 /* ChatBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5A1035D9C0ADACE5CD65E7 /* ChatBubbleView.swift */; };
-		266A150FF7BC71FC27AF774B /* PetEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28649436F3AD9F27B7E4625 /* PetEngine.swift */; };
+		29C10457BC0608C1B7E67DAC /* SpriteKitEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE76C97D05326362CADC324C /* SpriteKitEngine.swift */; };
 		2FC9CE0E2933B186B3A05E6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0612DE7D7D1A267C8CFEDEF0 /* Assets.xcassets */; };
 		319469BFFB82DCDAC6EBC326 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A4257D5BA1B8BA7D963679 /* AppDelegate.swift */; };
 		49158FE8D6B30E4FACA09107 /* SystemSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C56C40E144AC480A160E5B3 /* SystemSignal.swift */; };
+		50B3FD87D67B7F5B677E0508 /* SceneKitEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F396A45689C70085B3128D /* SceneKitEngine.swift */; };
 		539ABACDB538FDB20935F032 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12427FDFC408A249D1C3E2EA /* SettingsView.swift */; };
+		595B7C9A4F33B6949E4A9562 /* Dog3DAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35666294022C054E1396B5 /* Dog3DAnimations.swift */; };
 		69D786C472966C6D34FD41C9 /* DeskBuddyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C963CE34AE87D3DF3B28B83F /* DeskBuddyApp.swift */; };
 		6D0776F6720DD920A1013748 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D0974C218E6F658725092DF /* Speech.framework */; };
 		71059FEE585F1B7AF553C295 /* AIBridgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D277DCFE77AE705830275992 /* AIBridgeTests.swift */; };
@@ -23,6 +25,8 @@
 		77B9C80022179EE9F0237F8A /* PetWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561032E33A6E9F6CFE815A5 /* PetWindowController.swift */; };
 		794F144290BEA9D272F0C3DA /* AnimationRhythm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0947E64CF288BA59A1A5E403 /* AnimationRhythm.swift */; };
 		7CE35D17693E67444E030A2B /* TimeSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A73B32D5645B30BE0C63A9 /* TimeSignal.swift */; };
+		8A111051E5A8265CB0CCB5B4 /* PetRenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DFC277D8BE197B2F591610 /* PetRenderEngine.swift */; };
+		90427EE52ABF6DB6CA9B1FA2 /* Dog3DModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A829ED18808CD06D1AE8BD5F /* Dog3DModel.swift */; };
 		93703FF33ED493FD879A9AF2 /* EmotionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A3C264294B30D5B5C23547 /* EmotionEngineTests.swift */; };
 		9751718EBF2D57A244815540 /* VoiceInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF5711F6EA3732D5CFCA30 /* VoiceInput.swift */; };
 		A98B8AC774EB488B475AC1B5 /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9223E784DAFB09360F57C9C /* ConfigStore.swift */; };
@@ -32,6 +36,7 @@
 		EEF130A7739DFC059E0925E8 /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103B12FE020F55C54122C2E0 /* PetState.swift */; };
 		EFBC2E834C916892DB9D83D2 /* SystemPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A773FEDA97DCFB2FB3E7CD /* SystemPromptBuilder.swift */; };
 		F3893C0612F2D9EF691872A4 /* EmotionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E39481C042B33F63D09394 /* EmotionEngine.swift */; };
+		F80F8435F9466F91C7097871 /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = C6930633B5B817BE298A2509 /* ExportOptions.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,23 +58,28 @@
 		103B12FE020F55C54122C2E0 /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
 		12427FDFC408A249D1C3E2EA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		20A4257D5BA1B8BA7D963679 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		31F396A45689C70085B3128D /* SceneKitEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitEngine.swift; sourceTree = "<group>"; };
 		45A73B32D5645B30BE0C63A9 /* TimeSignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSignal.swift; sourceTree = "<group>"; };
 		53A3C264294B30D5B5C23547 /* EmotionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionEngineTests.swift; sourceTree = "<group>"; };
+		53DFC277D8BE197B2F591610 /* PetRenderEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetRenderEngine.swift; sourceTree = "<group>"; };
 		58A773FEDA97DCFB2FB3E7CD /* SystemPromptBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemPromptBuilder.swift; sourceTree = "<group>"; };
 		60B66CC60C145B118B07BE56 /* PetWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetWindowView.swift; sourceTree = "<group>"; };
 		6155145D5B22665A0EA43954 /* SpriteLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteLoader.swift; sourceTree = "<group>"; };
 		616416EE1BE44DBAA5F623EB /* DeskBuddyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeskBuddyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E35666294022C054E1396B5 /* Dog3DAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog3DAnimations.swift; sourceTree = "<group>"; };
 		7418E066B4A7449B1CEEC3FB /* ConversationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStore.swift; sourceTree = "<group>"; };
 		76B97022FE5CC97D03D458AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7834962F9A1B9636565FAE4F /* DeskBuddy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DeskBuddy.entitlements; sourceTree = "<group>"; };
 		86E39481C042B33F63D09394 /* EmotionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionEngine.swift; sourceTree = "<group>"; };
 		9CA24405C12B2AD51D95F5D0 /* AIBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIBridge.swift; sourceTree = "<group>"; };
+		A829ED18808CD06D1AE8BD5F /* Dog3DModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog3DModel.swift; sourceTree = "<group>"; };
+		AE76C97D05326362CADC324C /* SpriteKitEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitEngine.swift; sourceTree = "<group>"; };
 		C561032E33A6E9F6CFE815A5 /* PetWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetWindowController.swift; sourceTree = "<group>"; };
+		C6930633B5B817BE298A2509 /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = ExportOptions.plist; sourceTree = "<group>"; };
 		C963CE34AE87D3DF3B28B83F /* DeskBuddyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeskBuddyApp.swift; sourceTree = "<group>"; };
 		D277DCFE77AE705830275992 /* AIBridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIBridgeTests.swift; sourceTree = "<group>"; };
 		D41F3D6A4CBC06B71C9C2B4B /* DeskBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeskBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8DBA3591A676CF1D1DC21E1 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
-		E28649436F3AD9F27B7E4625 /* PetEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetEngine.swift; sourceTree = "<group>"; };
 		E322CB9C659DD5445E761014 /* VoiceOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceOutput.swift; sourceTree = "<group>"; };
 		E9223E784DAFB09360F57C9C /* ConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
 		E9CF5711F6EA3732D5CFCA30 /* VoiceInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInput.swift; sourceTree = "<group>"; };
@@ -101,8 +111,12 @@
 			isa = PBXGroup;
 			children = (
 				0947E64CF288BA59A1A5E403 /* AnimationRhythm.swift */,
-				E28649436F3AD9F27B7E4625 /* PetEngine.swift */,
+				6E35666294022C054E1396B5 /* Dog3DAnimations.swift */,
+				A829ED18808CD06D1AE8BD5F /* Dog3DModel.swift */,
+				53DFC277D8BE197B2F591610 /* PetRenderEngine.swift */,
 				103B12FE020F55C54122C2E0 /* PetState.swift */,
+				31F396A45689C70085B3128D /* SceneKitEngine.swift */,
+				AE76C97D05326362CADC324C /* SpriteKitEngine.swift */,
 				6155145D5B22665A0EA43954 /* SpriteLoader.swift */,
 			);
 			path = Pet;
@@ -113,6 +127,7 @@
 			children = (
 				0612DE7D7D1A267C8CFEDEF0 /* Assets.xcassets */,
 				7834962F9A1B9636565FAE4F /* DeskBuddy.entitlements */,
+				C6930633B5B817BE298A2509 /* ExportOptions.plist */,
 				76B97022FE5CC97D03D458AC /* Info.plist */,
 				DA5F70A82EA719798CA73B9A /* AI */,
 				D36C441046FBE7603705BF0A /* App */,
@@ -317,6 +332,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FC9CE0E2933B186B3A05E6F /* Assets.xcassets in Resources */,
+				F80F8435F9466F91C7097871 /* ExportOptions.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,13 +360,17 @@
 				A98B8AC774EB488B475AC1B5 /* ConfigStore.swift in Sources */,
 				1B9158C753D71959F2CAAB83 /* ConversationStore.swift in Sources */,
 				69D786C472966C6D34FD41C9 /* DeskBuddyApp.swift in Sources */,
+				595B7C9A4F33B6949E4A9562 /* Dog3DAnimations.swift in Sources */,
+				90427EE52ABF6DB6CA9B1FA2 /* Dog3DModel.swift in Sources */,
 				F3893C0612F2D9EF691872A4 /* EmotionEngine.swift in Sources */,
 				BFBAC3A3BD1FA647BB02B79F /* IntimacySignal.swift in Sources */,
-				266A150FF7BC71FC27AF774B /* PetEngine.swift in Sources */,
+				8A111051E5A8265CB0CCB5B4 /* PetRenderEngine.swift in Sources */,
 				EEF130A7739DFC059E0925E8 /* PetState.swift in Sources */,
 				77B9C80022179EE9F0237F8A /* PetWindowController.swift in Sources */,
 				0667EC37B6C23A63B148F886 /* PetWindowView.swift in Sources */,
+				50B3FD87D67B7F5B677E0508 /* SceneKitEngine.swift in Sources */,
 				539ABACDB538FDB20935F032 /* SettingsView.swift in Sources */,
+				29C10457BC0608C1B7E67DAC /* SpriteKitEngine.swift in Sources */,
 				BF398E620DF51FBBA6E2A653 /* SpriteLoader.swift in Sources */,
 				EFBC2E834C916892DB9D83D2 /* SystemPromptBuilder.swift in Sources */,
 				49158FE8D6B30E4FACA09107 /* SystemSignal.swift in Sources */,

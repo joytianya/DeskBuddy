@@ -20,7 +20,7 @@ enum PetState: Int, CaseIterable {
 
     var rowIndex: Int {
         switch self {
-        case .idle:    return 0  // Idle A
+        case .idle:    return 8  // Jump（跳跃动画，更活泼）
         case .happy:   return 4  // Walk A（走路摇摆，看起来开心）
         case .clingy:  return 5  // Walk B（走向主人，粘人）
         case .bored:   return 7  // Paw（抓挠动作，无聊）
@@ -33,7 +33,7 @@ enum PetState: Int, CaseIterable {
 
     var frameCount: Int {
         switch self {
-        case .idle:    return 4  // Row 0: 4 frames
+        case .idle:    return 7  // Row 8: 7 frames (Jump)
         case .happy:   return 4  // Row 4: 4 frames (Walk A)
         case .clingy:  return 4  // Row 5: 4 frames (Walk B)
         case .bored:   return 4  // Row 7: 4 frames (Paw)

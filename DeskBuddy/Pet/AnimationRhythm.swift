@@ -11,7 +11,8 @@ struct AnimationRhythm {
     static func forState(_ state: PetState) -> AnimationRhythm {
         switch state {
         case .idle:
-            return AnimationRhythm(playDuration: 2.0, pauseDuration: 3.0, frameInterval: 0.20, maxCycles: nil)
+            // idle 状态：跳跃动画，跳2次后停顿，不一直跳
+            return AnimationRhythm(playDuration: 1.0, pauseDuration: 3.0, frameInterval: 0.15, maxCycles: 2)
         case .happy:
             return AnimationRhythm(playDuration: 1.5, pauseDuration: 2.5, frameInterval: 0.15, maxCycles: nil)
         case .sleepy:

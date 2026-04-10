@@ -13,7 +13,7 @@ class EmotionEngine: ObservableObject {
     }
 
     func start() {
-        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
             self?.intimacy.tick(idleMinutes: SystemSignal.currentIdleMinutes())
             self?.update()
         }
@@ -43,6 +43,12 @@ class EmotionEngine: ObservableObject {
         let idleMinutes = SystemSignal.currentIdleMinutes()
         if idleMinutes > 3 {
             return .lying
+        }
+
+        // 高亲密度 + 低活动 → clingy（粘人状态）
+        // 当用户频繁互动但系统相对平静时，宠物会变得粘人
+        if intimacyScore > 0.7 && systemScore < 0.5 && idleMinutes < 2 {
+            return .clingy
         }
 
         // 新阈值分布（更平滑）

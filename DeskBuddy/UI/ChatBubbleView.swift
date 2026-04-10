@@ -9,7 +9,17 @@ struct ChatBubbleView: View {
     @State private var isVisible = false
     @StateObject private var voiceInput = VoiceInput()
     @StateObject private var voiceOutput = VoiceOutput()
+    let conversationStore = ConversationStore.shared
     var voiceEnabled: Bool = false
+
+    // 动态计算聊天区域高度（基于消息数量）
+    private var chatHeight: CGFloat {
+        let minHeight: CGFloat = 120
+        let maxHeight: CGFloat = 280
+        let heightPerMessage: CGFloat = 25  // 每条消息约25px高度
+        let calculatedHeight = minHeight + CGFloat(messages.count) * heightPerMessage
+        return min(maxHeight, max(minHeight, calculatedHeight))
+    }
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
@@ -50,7 +60,7 @@ struct ChatBubbleView: View {
                             proxy.scrollTo("bottom")
                         }
                     }
-                    .frame(width: 260, height: 180)
+                    .frame(width: 260, height: chatHeight)
                     .background(Color.black.opacity(0.6))
                     .cornerRadius(12)
 
@@ -99,6 +109,11 @@ struct ChatBubbleView: View {
         }
         .onExitCommand {
             if isVisible { withAnimation(.spring()) { isVisible = false } }
+        }
+        .onAppear {
+            // 加载最近10条对话历史，恢复上下文
+            let history = conversationStore.recentMessages(limit: 10)
+            messages = history.map { (role: $0.role, text: $0.content) }
         }
     }
 

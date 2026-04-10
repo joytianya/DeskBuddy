@@ -218,6 +218,18 @@ struct SettingsView: View {
                                 })
                         }
                     }
+
+                    // 窗口位置重置
+                    Button("重置窗口位置") {
+                        let screenFrame = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
+                        let baseSize: CGFloat = settings.renderMode == "3d" ? 200 : 128
+                        let windowSize = baseSize * CGFloat(settings.petScale)
+                        let centerX = screenFrame.midX - windowSize / 2
+                        let centerY = screenFrame.midY - windowSize / 2
+                        ConfigStore.shared.windowX = centerX
+                        ConfigStore.shared.windowY = centerY
+                        NotificationCenter.default.post(name: .resetWindowPosition, object: nil)
+                    }
                 }
 
                 Section("语音") {

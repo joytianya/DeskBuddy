@@ -8,6 +8,9 @@ class EmotionEngine: ObservableObject {
     private let intimacy: IntimacySignal
     private var timer: Timer?
 
+    /// 公开的亲密度分数（供外部访问）
+    var intimacyScore: Double { intimacy.score }
+
     init(intimacy: IntimacySignal = IntimacySignal()) {
         self.intimacy = intimacy
     }

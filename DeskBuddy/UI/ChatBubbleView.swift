@@ -131,7 +131,7 @@ struct ChatBubbleView: View {
                 for try await chunk in aiBridge.sendStream(
                     userMessage: text,
                     state: emotionEngine.currentState,
-                    intimacyScore: 0.5
+                    intimacyScore: emotionEngine.intimacyScore
                 ) {
                     full += chunk
                     await MainActor.run { messages[idx] = (role: "assistant", text: full) }

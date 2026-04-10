@@ -11,6 +11,8 @@ class VoiceOutput: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     }
 
     func speak(_ text: String, rate: Float = 0.5, pitch: Float = 1.2) {
+        // 先停止之前的语音，避免重叠
+        synthesizer.stopSpeaking(at: .immediate)
         let utterance = AVSpeechUtterance(string: text)
         utterance.rate = rate
         utterance.pitchMultiplier = pitch

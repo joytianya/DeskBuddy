@@ -129,7 +129,7 @@ class Dog3DModel {
     static func setDogColor(_ node: SCNNode, color: NSColor) {
         let material = SCNMaterial()
         material.diffuse.contents = color
-        material.lightingModel = .constant
+        // 保持默认 lightingModel (.blinn)，保留 3D 光影效果
 
         for child in node.childNodes {
             if let geom = child.geometry {

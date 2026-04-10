@@ -44,15 +44,12 @@ struct Dog3DAnimations {
         return SCNAction.repeatForever(sequence)
     }
 
-    /// happy - 尾巴快速摇摆（使用 AnimationRhythm）
+    /// happy - 尾巴快速摇摆（使用 AnimationRhythm，针对尾巴节点）
     static func happyAnimation(_ dogNode: SCNNode) -> SCNAction {
         let rhythm = AnimationRhythm.forState(.happy)
-        // 尾巴摇摆使用 rhythm.frameInterval 作为节奏（作用于整个 dogNode）
+        // 使用尾巴摇摆辅助函数
         let wagDuration = rhythm.frameInterval
-        let wag = SCNAction.sequence([
-            SCNAction.rotateTo(x: 0.8, y: 0, z: 0.4, duration: wagDuration),
-            SCNAction.rotateTo(x: 0.8, y: 0, z: -0.4, duration: wagDuration)
-        ])
+        let wag = tailWagAction(dogNode, intensity: 0.35, duration: wagDuration)
 
         // 身体轻微跳跃
         let bounce = SCNAction.sequence([
@@ -74,7 +71,7 @@ struct Dog3DAnimations {
         return SCNAction.repeatForever(sequence)
     }
 
-    /// excited - 连续跳跃 + 尾巴疯狂摇摆（使用 AnimationRhythm）
+    /// excited - 连续跳跃 + 尾巴疯狂摇摆（使用 AnimationRhythm，针对尾巴节点）
     static func excitedAnimation(_ dogNode: SCNNode) -> SCNAction {
         let rhythm = AnimationRhythm.forState(.excited)
         let jump = SCNAction.sequence([
@@ -82,10 +79,8 @@ struct Dog3DAnimations {
             SCNAction.moveBy(x: 0, y: -0.3, z: 0, duration: rhythm.frameInterval)
         ])
 
-        let wag = SCNAction.sequence([
-            SCNAction.rotateTo(x: 0.8, y: 0, z: 0.5, duration: 0.08),
-            SCNAction.rotateTo(x: 0.8, y: 0, z: -0.5, duration: 0.08)
-        ])
+        // 使用尾巴摇摆辅助函数（更大幅度）
+        let wag = tailWagAction(dogNode, intensity: 0.5, duration: 0.08)
 
         // excited 有 maxCycles = 2，跳完后停顿
         let cycles = rhythm.maxCycles ?? 2
@@ -142,20 +137,42 @@ struct Dog3DAnimations {
         return SCNAction.repeatForever(sequence)
     }
 
-    /// bored - 偶尔摇头（使用 AnimationRhythm）
+    /// bored - 偶尔摇头（使用 AnimationRhythm，仅针对头部）
     static func boredAnimation(_ dogNode: SCNNode) -> SCNAction {
         let rhythm = AnimationRhythm.forState(.bored)
-        // 摇头动作作用于整个 dogNode
-        let shakeHead = SCNAction.sequence([
-            SCNAction.rotateTo(x: 0, y: 0.2, z: 0, duration: 0.3),
-            SCNAction.rotateTo(x: 0, y: -0.2, z: 0, duration: 0.3),
-            SCNAction.rotateTo(x: 0, y: 0, z: 0, duration: 0.3)
-        ])
-        // 摇头动作总时长 0.9s
+        // 找到头部节点，只对头部进行摇动
+        let headNode = dogNode.childNode(withName: "body", recursively: true)?
+            .childNode(withName: "head", recursively: true)
+
+        // 摇头动作（若找到头部则针对头部，否则作用于整体）
+        let shakeHead: SCNAction
+        if let head = headNode {
+            // 保存原始角度
+            let originalRotation = head.eulerAngles
+            shakeHead = SCNAction.sequence([
+                SCNAction.run { _ in head.eulerAngles = SCNVector3(originalRotation.x, originalRotation.y + 0.25, originalRotation.z) },
+                SCNAction.wait(duration: 0.3),
+                SCNAction.run { _ in head.eulerAngles = SCNVector3(originalRotation.x, originalRotation.y - 0.25, originalRotation.z) },
+                SCNAction.wait(duration: 0.3),
+                SCNAction.run { _ in head.eulerAngles = originalRotation }
+            ])
+        } else {
+            // fallback: 作用于整体
+            shakeHead = SCNAction.sequence([
+                SCNAction.rotateTo(x: 0, y: 0.2, z: 0, duration: 0.3),
+                SCNAction.rotateTo(x: 0, y: -0.2, z: 0, duration: 0.3),
+                SCNAction.rotateTo(x: 0, y: 0, z: 0, duration: 0.3)
+            ])
+        }
+
+        // 添加腿部微动（增加生动感）
+        let legShift = legShiftAction(dogNode, duration: 0.5)
+
+        // 摇头动作总时长约 0.9s
         let shakeDuration = 0.9
         let cycles = max(1, Int(rhythm.playDuration / shakeDuration))
         let sequence = SCNAction.sequence([
-            SCNAction.repeat(shakeHead, count: cycles),
+            SCNAction.group([SCNAction.repeat(shakeHead, count: cycles), legShift]),
             SCNAction.wait(duration: rhythm.pauseDuration)
         ])
         return SCNAction.repeatForever(sequence)
@@ -179,15 +196,12 @@ struct Dog3DAnimations {
         return SCNAction.repeatForever(sequence)
     }
 
-    /// clingy - 摇尾巴 + 身体轻微前倾（使用 AnimationRhythm）
+    /// clingy - 摇尾巴 + 身体轻微前倾（使用 AnimationRhythm，针对尾巴节点）
     static func clingyAnimation(_ dogNode: SCNNode) -> SCNAction {
         let rhythm = AnimationRhythm.forState(.clingy)
-        // 使用 rhythm.frameInterval 作为尾巴摇摆节奏
+        // 使用尾巴摇摆辅助函数（中等幅度）
         let wagDuration = rhythm.frameInterval
-        let wag = SCNAction.sequence([
-            SCNAction.rotateTo(x: 0.8, y: 0, z: 0.3, duration: wagDuration),
-            SCNAction.rotateTo(x: 0.8, y: 0, z: -0.3, duration: wagDuration)
-        ])
+        let wag = tailWagAction(dogNode, intensity: 0.3, duration: wagDuration)
 
         let lean = SCNAction.sequence([
             SCNAction.moveBy(x: 0.05, y: 0, z: 0, duration: 0.4),
@@ -225,6 +239,56 @@ struct Dog3DAnimations {
         return SCNAction.sequence([
             SCNAction.rotateBy(x: CGFloat.pi * 2, y: 0, z: 0, duration: 0.4),
             SCNAction.rotateTo(x: 0, y: 0, z: 0, duration: 0.1)
+        ])
+    }
+
+    // MARK: - 辅助动画
+
+    /// 腿部微动（增加生动感）
+    private static func legShiftAction(_ dogNode: SCNNode, duration: TimeInterval) -> SCNAction {
+        // 找到腿部节点
+        let frontLeft = dogNode.childNode(withName: "frontLeftLeg", recursively: true)
+        let frontRight = dogNode.childNode(withName: "frontRightLeg", recursively: true)
+        let backLeft = dogNode.childNode(withName: "backLeftLeg", recursively: true)
+        let backRight = dogNode.childNode(withName: "backRightLeg", recursively: true)
+
+        guard frontLeft != nil && frontRight != nil && backLeft != nil && backRight != nil else {
+            return SCNAction.wait(duration: duration)  // 无腿部节点时返回空动作
+        }
+
+        // 腿部轻微移动（模拟站姿调整）
+        return SCNAction.sequence([
+            SCNAction.run { _ in
+                frontLeft?.position.z += 0.02
+                backRight?.position.z -= 0.02
+            },
+            SCNAction.wait(duration: duration),
+            SCNAction.run { _ in
+                frontLeft?.position.z -= 0.02
+                backRight?.position.z += 0.02
+            },
+            SCNAction.wait(duration: duration)
+        ])
+    }
+
+    /// 尾巴摇摆（针对尾巴节点）
+    private static func tailWagAction(_ dogNode: SCNNode, intensity: CGFloat, duration: TimeInterval) -> SCNAction {
+        let tailNode = dogNode.childNode(withName: "tail", recursively: true)
+        guard let tail = tailNode else {
+            // fallback: 整体轻微摇动
+            return SCNAction.sequence([
+                SCNAction.rotateTo(x: 0.8 + intensity, y: 0, z: intensity * 0.5, duration: duration),
+                SCNAction.rotateTo(x: 0.8 + intensity, y: 0, z: -intensity * 0.5, duration: duration)
+            ])
+        }
+
+        // 保存原始角度
+        let originalRotation = tail.eulerAngles
+        return SCNAction.sequence([
+            SCNAction.run { _ in tail.eulerAngles = SCNVector3(originalRotation.x, originalRotation.y, originalRotation.z + intensity) },
+            SCNAction.wait(duration: duration),
+            SCNAction.run { _ in tail.eulerAngles = SCNVector3(originalRotation.x, originalRotation.y, originalRotation.z - intensity) },
+            SCNAction.wait(duration: duration)
         ])
     }
 }

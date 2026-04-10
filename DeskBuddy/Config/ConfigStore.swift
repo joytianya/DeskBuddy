@@ -45,6 +45,13 @@ class ConfigStore: ObservableObject {
     @Published var animationRhythms: [String: AnimationRhythmConfig] = defaultAnimationRhythms() {
         didSet { save() }
     }
+    /// 窗口位置：保存上次关闭时的位置
+    @Published var windowX: Double = 100.0 {
+        didSet { save() }
+    }
+    @Published var windowY: Double = 100.0 {
+        didSet { save() }
+    }
 
     /// 默认动画节奏配置（8 个状态全覆盖）
     static func defaultAnimationRhythms() -> [String: AnimationRhythmConfig] {
@@ -85,6 +92,8 @@ class ConfigStore: ObservableObject {
         var petColorHex: String = "#FFFFFF"
         var renderMode: String = "3d"
         var animationRhythms: [String: AnimationRhythmConfig]?  // Optional 保持向后兼容
+        var windowX: Double = 100.0
+        var windowY: Double = 100.0
     }
 
     // MARK: - Load/Save
@@ -108,6 +117,9 @@ class ConfigStore: ObservableObject {
         selectedSkin = dict["selectedSkin"] as? String ?? "cat-sheet"
         petColorHex = dict["petColorHex"] as? String ?? "#FFFFFF"
         renderMode = dict["renderMode"] as? String ?? "3d"  // 新字段默认3d
+        // 加载窗口位置（向后兼容：无字段时使用默认值 100.0）
+        windowX = dict["windowX"] as? Double ?? 100.0
+        windowY = dict["windowY"] as? Double ?? 100.0
         // 加载动画节奏配置（向后兼容：无字段时使用默认值）
         if let rhythmsDict = dict["animationRhythms"] as? [String: Any] {
             var loadedRhythms: [String: AnimationRhythmConfig] = [:]
@@ -147,7 +159,9 @@ class ConfigStore: ObservableObject {
                 selectedSkin: self.selectedSkin,
                 petColorHex: self.petColorHex,
                 renderMode: self.renderMode,
-                animationRhythms: self.animationRhythms
+                animationRhythms: self.animationRhythms,
+                windowX: self.windowX,
+                windowY: self.windowY
             )
             self.writeConfig(config)
         }
@@ -177,7 +191,9 @@ class ConfigStore: ObservableObject {
             "petScale": config.petScale,
             "renderMode": config.renderMode,
             "selectedSkin": config.selectedSkin,
-            "voiceEnabled": config.voiceEnabled
+            "voiceEnabled": config.voiceEnabled,
+            "windowX": config.windowX,
+            "windowY": config.windowY
         ]
         guard let data = try? JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted, .sortedKeys]) else { return }
         // 将 2 空格缩进转换为 4 空格，并去掉斜杠转义
@@ -227,7 +243,8 @@ class ConfigStore: ObservableObject {
             apiKey: apiKey, aiBaseURL: aiBaseURL, aiModel: aiModel,
             voiceEnabled: voiceEnabled, petScale: petScale,
             selectedSkin: selectedSkin, petColorHex: petColorHex,
-            renderMode: renderMode, animationRhythms: animationRhythms
+            renderMode: renderMode, animationRhythms: animationRhythms,
+            windowX: windowX, windowY: windowY
         )
         writeConfig(config)
     }

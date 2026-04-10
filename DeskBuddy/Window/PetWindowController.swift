@@ -7,6 +7,7 @@ extension Notification.Name {
     static let openSettings = Notification.Name("DeskBuddy.openSettings")
     static let toggleChat   = Notification.Name("DeskBuddy.toggleChat")
     static let hideChat     = Notification.Name("DeskBuddy.hideChat")
+    static let resetWindowPosition = Notification.Name("DeskBuddy.resetWindowPosition")
 }
 
 private class PetPanel: NSPanel {
@@ -49,7 +50,7 @@ class PetWindowController: NSWindowController {
         let windowSize = baseSize * CGFloat(config.petScale)
 
         let panel = PetPanel(
-            contentRect: NSRect(x: 100, y: 100, width: windowSize, height: windowSize),
+            contentRect: NSRect(x: config.windowX, y: config.windowY, width: windowSize, height: windowSize),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -71,6 +72,44 @@ class PetWindowController: NSWindowController {
         setupEventMonitor()
         setupGlobalMouseMonitor()
         setupConfigListener()
+        setupWindowPositionListener()
+        setupResetPositionListener()
+    }
+
+    /// 监听重置窗口位置通知
+    private func setupResetPositionListener() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleResetWindowPosition),
+            name: .resetWindowPosition,
+            object: nil
+        )
+    }
+
+    @objc private func handleResetWindowPosition() {
+        guard let window = window else { return }
+        let screenFrame = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
+        let windowSize = Self.calculateWindowSize()
+        let centerX = screenFrame.midX - windowSize / 2
+        let centerY = screenFrame.midY - windowSize / 2
+        let newFrame = NSRect(x: centerX, y: centerY, width: windowSize, height: windowSize)
+        window.setFrame(newFrame, display: true)
+    }
+
+    /// 监听窗口移动，保存位置到 ConfigStore
+    private func setupWindowPositionListener() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(windowDidMove),
+            name: NSWindow.didMoveNotification,
+            object: window
+        )
+    }
+
+    @objc private func windowDidMove() {
+        guard let window = window else { return }
+        ConfigStore.shared.windowX = window.frame.origin.x
+        ConfigStore.shared.windowY = window.frame.origin.y
     }
 
     /// 监听配置变化，动态调整窗口尺寸
